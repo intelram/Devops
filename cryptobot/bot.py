@@ -8,7 +8,8 @@ import uuid
 from datetime import datetime, timezone
 
 from . import strategy
-from .config import KILL_SWITCH, live_trading_status
+from . import config as cfgmod
+from .config import live_trading_status
 from .kraken import KrakenError, KrakenPrivate, KrakenPublic
 from .ledger import Ledger
 from .risk import RiskEngine
@@ -75,7 +76,29 @@ def reconcile_live(cfg, ledger, priv):
         ledger.event("cash_clamped_to_exchange_balance", cash_cad=cad)
 
 
+class _RunLock:
+    """Exclusive lock on state/run.lock so two cycles (cron + web panel) never interleave."""
+
+    def __enter__(self):
+        cfgmod.STATE_DIR.mkdir(parents=True, exist_ok=True)
+        self.f = open(cfgmod.STATE_DIR / "run.lock", "w")
+        try:
+            import fcntl
+            fcntl.flock(self.f, fcntl.LOCK_EX)
+        except ImportError:  # Windows: no fcntl; cron and the panel are rarely simultaneous there
+            pass
+        return self
+
+    def __exit__(self, *exc):
+        self.f.close()
+
+
 def run_once(cfg, want_live=False, now=None):
+    with _RunLock():
+        return _run_once(cfg, want_live, now)
+
+
+def _run_once(cfg, want_live=False, now=None):
     now = now or time.time()
     allowed, reasons = live_trading_status(cfg)
     live = want_live and allowed
@@ -85,7 +108,7 @@ def run_once(cfg, want_live=False, now=None):
         ledger.event("live_refused", reasons=reasons)
         print("Live trading NOT enabled -> running in PAPER mode. Reasons:\n  - " + "\n  - ".join(reasons))
 
-    if KILL_SWITCH.exists():
+    if cfgmod.kill_active():
         ledger.event("kill_switch", action="no trading this run")
         if live:
             try:

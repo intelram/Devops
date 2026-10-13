@@ -61,14 +61,14 @@ class LiveGate(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         d = Path(self.tmp.name)
-        self._saved = (config_mod.KILL_SWITCH, config_mod.APPROVAL_FILE, config_mod.STATE_DIR)
-        config_mod.STATE_DIR, config_mod.KILL_SWITCH, config_mod.APPROVAL_FILE = d, d / "KILL", d / "approval.json"
+        self._saved = config_mod.STATE_DIR
+        config_mod.set_state_dir(d)
         self.cfg = copy.deepcopy(CFG)
         self.cfg["live_trading_enabled"] = True
         os.environ[config_mod.LIVE_ENV_VAR] = config_mod.LIVE_ENV_VALUE
 
     def tearDown(self):
-        config_mod.KILL_SWITCH, config_mod.APPROVAL_FILE, config_mod.STATE_DIR = self._saved
+        config_mod.set_state_dir(self._saved)
         os.environ.pop(config_mod.LIVE_ENV_VAR, None)
         self.tmp.cleanup()
 

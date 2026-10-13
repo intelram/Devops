@@ -1,0 +1,43 @@
+id,dataset,fees,strategy,start,end,final_cad,return_pct,cagr_pct,max_drawdown_pct,trades,fees_cad,fee_budget_hit
+kraken_cad|maker|Buy & hold 100% BTC (benchmark),kraken_cad,maker,Buy & hold 100% BTC (benchmark),2025-05-11,2026-10-12,39.86,-20.3,-14.7,-52.1,1,0.2,
+kraken_cad|taker|Buy & hold 100% BTC (benchmark),kraken_cad,taker,Buy & hold 100% BTC (benchmark),2025-05-11,2026-10-12,39.66,-20.7,-15.0,-52.1,1,0.4,
+kraken_cad|app|Buy & hold 100% BTC (benchmark),kraken_cad,app,Buy & hold 100% BTC (benchmark),2025-05-11,2026-10-12,39.44,-21.1,-15.4,-52.1,1,0.5,
+kraken_cad|maker|Buy & hold 70% BTC / 30% ETH,kraken_cad,maker,Buy & hold 70% BTC / 30% ETH,2025-05-11,2026-10-12,42.39,-15.2,-11.0,-57.5,2,0.2,
+kraken_cad|taker|Buy & hold 70% BTC / 30% ETH,kraken_cad,taker,Buy & hold 70% BTC / 30% ETH,2025-05-11,2026-10-12,42.18,-15.6,-11.3,-57.5,2,0.4,
+kraken_cad|app|Buy & hold 70% BTC / 30% ETH,kraken_cad,app,Buy & hold 70% BTC / 30% ETH,2025-05-11,2026-10-12,41.95,-16.1,-11.6,-57.5,2,0.5,
+"kraken_cad|maker|Scheduled entry BTC (5 x CAD10, 14d apart)",kraken_cad,maker,"Scheduled entry BTC (5 x CAD10, 14d apart)",2025-05-11,2026-10-12,40.11,-19.8,-14.4,-51.7,5,0.2,
+"kraken_cad|taker|Scheduled entry BTC (5 x CAD10, 14d apart)",kraken_cad,taker,"Scheduled entry BTC (5 x CAD10, 14d apart)",2025-05-11,2026-10-12,39.87,-20.3,-14.7,-51.9,5,0.4,
+"kraken_cad|app|Scheduled entry BTC (5 x CAD10, 14d apart)",kraken_cad,app,"Scheduled entry BTC (5 x CAD10, 14d apart)",2025-05-11,2026-10-12,39.6,-20.8,-15.1,-52.1,5,0.5,
+"kraken_cad|maker|Trend filter BTC (200d SMA, weekly)",kraken_cad,maker,"Trend filter BTC (200d SMA, weekly)",2025-05-11,2026-10-12,55.05,10.1,7.0,-17.8,3,0.6,
+"kraken_cad|taker|Trend filter BTC (200d SMA, weekly)",kraken_cad,taker,"Trend filter BTC (200d SMA, weekly)",2025-05-11,2026-10-12,54.26,8.5,5.9,-17.8,3,1.2,
+"kraken_cad|app|Trend filter BTC (200d SMA, weekly)",kraken_cad,app,"Trend filter BTC (200d SMA, weekly)",2025-05-11,2026-10-12,53.37,6.7,4.7,-18.5,3,1.49,
+kraken_cad|maker|Trend filter 70/30 BTC/ETH (200d SMA),kraken_cad,maker,Trend filter 70/30 BTC/ETH (200d SMA),2025-05-11,2026-10-12,54.88,9.8,6.8,-23.3,6,0.61,
+kraken_cad|taker|Trend filter 70/30 BTC/ETH (200d SMA),kraken_cad,taker,Trend filter 70/30 BTC/ETH (200d SMA),2025-05-11,2026-10-12,54.1,8.2,5.7,-24.1,6,1.21,
+kraken_cad|app|Trend filter 70/30 BTC/ETH (200d SMA),kraken_cad,app,Trend filter 70/30 BTC/ETH (200d SMA),2025-05-11,2026-10-12,53.25,6.5,4.5,-24.9,6,1.51,
+"kraken_cad|maker|Rebalance 70/30 (10pp band, weekly)",kraken_cad,maker,"Rebalance 70/30 (10pp band, weekly)",2025-05-11,2026-10-12,45.66,-8.7,-6.2,-53.6,4,0.25,
+"kraken_cad|taker|Rebalance 70/30 (10pp band, weekly)",kraken_cad,taker,"Rebalance 70/30 (10pp band, weekly)",2025-05-11,2026-10-12,45.25,-9.5,-6.8,-53.6,4,0.49,
+"kraken_cad|app|Rebalance 70/30 (10pp band, weekly)",kraken_cad,app,"Rebalance 70/30 (10pp band, weekly)",2025-05-11,2026-10-12,45.06,-9.9,-7.0,-53.6,4,0.62,
+kraken_cad|maker|[sensitivity] Trend filter BTC 100d SMA,kraken_cad,maker,[sensitivity] Trend filter BTC 100d SMA,2025-05-11,2026-10-12,42.68,-14.6,-10.5,-35.3,9,1.7,
+kraken_cad|taker|[sensitivity] Trend filter BTC 100d SMA,kraken_cad,taker,[sensitivity] Trend filter BTC 100d SMA,2025-05-11,2026-10-12,40.79,-18.4,-13.3,-37.2,9,3.34,2026-04-27
+kraken_cad|app|[sensitivity] Trend filter BTC 100d SMA,kraken_cad,app,[sensitivity] Trend filter BTC 100d SMA,2025-05-11,2026-10-12,38.81,-22.4,-16.3,-39.3,9,4.09,2025-11-03
+long_usd|maker|Buy & hold 100% BTC (benchmark),long_usd,maker,Buy & hold 100% BTC (benchmark),2017-07-20,2026-10-12,1801.13,3502.3,47.4,-83.8,1,0.2,
+long_usd|taker|Buy & hold 100% BTC (benchmark),long_usd,taker,Buy & hold 100% BTC (benchmark),2017-07-20,2026-10-12,1792.11,3484.2,47.3,-83.8,1,0.4,
+long_usd|app|Buy & hold 100% BTC (benchmark),long_usd,app,Buy & hold 100% BTC (benchmark),2017-07-20,2026-10-12,1782.27,3464.5,47.2,-83.8,1,0.5,
+long_usd|maker|Buy & hold 70% BTC / 30% ETH,long_usd,maker,Buy & hold 70% BTC / 30% ETH,2017-07-20,2026-10-12,1448.22,2796.4,44.0,-84.5,2,0.2,
+long_usd|taker|Buy & hold 70% BTC / 30% ETH,long_usd,taker,Buy & hold 70% BTC / 30% ETH,2017-07-20,2026-10-12,1440.96,2781.9,43.9,-84.5,2,0.4,
+long_usd|app|Buy & hold 70% BTC / 30% ETH,long_usd,app,Buy & hold 70% BTC / 30% ETH,2017-07-20,2026-10-12,1433.05,2766.1,43.8,-84.5,2,0.5,
+"long_usd|maker|Scheduled entry BTC (5 x CAD10, 14d apart)",long_usd,maker,"Scheduled entry BTC (5 x CAD10, 14d apart)",2017-07-20,2026-10-12,1193.71,2287.4,41.0,-81.0,5,0.18,
+"long_usd|taker|Scheduled entry BTC (5 x CAD10, 14d apart)",long_usd,taker,"Scheduled entry BTC (5 x CAD10, 14d apart)",2017-07-20,2026-10-12,1192.81,2285.6,41.0,-81.0,5,0.37,
+"long_usd|app|Scheduled entry BTC (5 x CAD10, 14d apart)",long_usd,app,"Scheduled entry BTC (5 x CAD10, 14d apart)",2017-07-20,2026-10-12,1191.8,2283.6,41.0,-81.1,5,0.47,
+"long_usd|maker|Trend filter BTC (200d SMA, weekly)",long_usd,maker,"Trend filter BTC (200d SMA, weekly)",2017-07-20,2026-10-12,342.61,585.2,23.2,-64.9,35,8.18,2020-05-04
+"long_usd|taker|Trend filter BTC (200d SMA, weekly)",long_usd,taker,"Trend filter BTC (200d SMA, weekly)",2017-07-20,2026-10-12,330.95,561.9,22.7,-64.9,35,16.3,2019-04-08
+"long_usd|app|Trend filter BTC (200d SMA, weekly)",long_usd,app,"Trend filter BTC (200d SMA, weekly)",2017-07-20,2026-10-12,318.27,536.5,22.2,-64.9,35,20.28,2018-03-19
+long_usd|maker|Trend filter 70/30 BTC/ETH (200d SMA),long_usd,maker,Trend filter 70/30 BTC/ETH (200d SMA),2017-07-20,2026-10-12,420.05,740.1,25.9,-58.0,62,8.01,2020-05-04
+long_usd|taker|Trend filter 70/30 BTC/ETH (200d SMA),long_usd,taker,Trend filter 70/30 BTC/ETH (200d SMA),2017-07-20,2026-10-12,408.21,716.4,25.5,-58.4,62,15.97,2019-04-08
+long_usd|app|Trend filter 70/30 BTC/ETH (200d SMA),long_usd,app,Trend filter 70/30 BTC/ETH (200d SMA),2017-07-20,2026-10-12,395.34,690.7,25.1,-59.0,62,19.86,2018-04-30
+"long_usd|maker|Rebalance 70/30 (10pp band, weekly)",long_usd,maker,"Rebalance 70/30 (10pp band, weekly)",2017-07-20,2026-10-12,1264.59,2429.2,41.9,-80.9,5,0.97,
+"long_usd|taker|Rebalance 70/30 (10pp band, weekly)",long_usd,taker,"Rebalance 70/30 (10pp band, weekly)",2017-07-20,2026-10-12,1258.39,2416.8,41.8,-80.9,5,1.94,
+"long_usd|app|Rebalance 70/30 (10pp band, weekly)",long_usd,app,"Rebalance 70/30 (10pp band, weekly)",2017-07-20,2026-10-12,1251.62,2403.2,41.7,-80.9,5,2.42,
+long_usd|maker|[sensitivity] Trend filter BTC 100d SMA,long_usd,maker,[sensitivity] Trend filter BTC 100d SMA,2017-07-20,2026-10-12,433.0,766.0,26.3,-64.5,50,11.39,2019-09-02
+long_usd|taker|[sensitivity] Trend filter BTC 100d SMA,long_usd,taker,[sensitivity] Trend filter BTC 100d SMA,2017-07-20,2026-10-12,416.86,733.7,25.8,-65.1,50,22.71,2018-07-30
+long_usd|app|[sensitivity] Trend filter BTC 100d SMA,long_usd,app,[sensitivity] Trend filter BTC 100d SMA,2017-07-20,2026-10-12,399.32,698.6,25.2,-65.9,50,28.25,2018-05-14

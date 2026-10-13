@@ -58,6 +58,27 @@ def windows(bars, start_index, years):
         i += step
 
 
+CURVE_STRATEGIES = ["Buy & hold 100% BTC (benchmark)", "Buy & hold 70% BTC / 30% ETH",
+                    "Scheduled entry BTC (5 x CAD10, 14d apart)", "Trend filter BTC (200d SMA, weekly)",
+                    "Rebalance 70/30 (10pp band, weekly)"]
+
+
+def export_curves(cfg, datasets):
+    """Equity curves (taker scenario) for charts. Long history is sampled weekly."""
+    fee, slip = SCENARIOS["taker (0.80% fee + 0.15% slip)"]
+    rows = []
+    for key, bars in datasets.items():
+        for name, c in strategy_set(cfg).items():
+            if name not in CURVE_STRATEGIES:
+                continue
+            curve = run_backtest(c, bars, fee, slip, start_index=200, return_curve=True)["curve"]
+            step = 7 if key == "long_usd" else 1
+            pts = curve[::step] + ([curve[-1]] if (len(curve) - 1) % step else [])
+            rows += [{"dataset": key, "strategy": name, "date": d, "equity": v} for d, v in pts]
+    with open(DATA_DIR / "backtest_curves.json", "w") as f:
+        json.dump(rows, f)
+
+
 def main():
     cfg = load_config()
     out = []
@@ -80,6 +101,7 @@ def main():
                              for k, v in r.items() if k != "start_index"}} for r in roll]})
     with open(DATA_DIR / "backtest_results.json", "w") as f:
         json.dump(out, f, indent=2)
+    export_curves(cfg, {"kraken_cad": kb, "long_usd": cb})
     for block in out[:2]:
         print(f"\n=== {block['dataset']} ===")
         print(f"{'strategy':45s} {'scenario':40s} {'final':>7s} {'ret%':>7s} {'CAGR%':>6s} {'maxDD%':>7s} {'trades':>6s} {'fees':>6s}  fee-budget-hit")

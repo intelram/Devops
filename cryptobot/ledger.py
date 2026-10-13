@@ -3,8 +3,9 @@ fee, error and portfolio change is written to the log before state is updated.""
 import json
 import os
 import time
+from pathlib import Path
 
-from .config import STATE_DIR
+from . import config as cfgmod
 
 
 def default_state(cfg):
@@ -26,7 +27,7 @@ def default_state(cfg):
 
 class Ledger:
     def __init__(self, cfg, mode="paper", state_dir=None):
-        self.dir = state_dir or STATE_DIR
+        self.dir = Path(state_dir or cfgmod.STATE_DIR)
         self.dir.mkdir(parents=True, exist_ok=True)
         self.mode = mode
         self.log_path = self.dir / f"events_{mode}.jsonl"

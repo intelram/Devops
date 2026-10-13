@@ -7,8 +7,14 @@
 - **Paper mode by default.** Live trading needs four separate gates: the config flag, a recorded approval of the exact risk-config hash, an environment-variable phrase, and no kill switch.
 - Zero third-party dependencies (Python 3.10+ standard library only).
 
+## Web apps
+
+- **Local control panel:** `python -m cryptobot web`, then open http://127.0.0.1:8050. It shows your portfolio, orders, the full event log, backtests, the live-trading gates and your settings, and has buttons for "run one paper cycle" and the kill switch. It listens on loopback only, uses no JavaScript, and sends a strict CSP. Every action is a CSRF-protected POST. It **cannot** approve live trading, change limits or see API keys.
+- **Hosted dashboard (claude.ai, private):** backtests, platform comparison, risk rules and free-crypto research, readable from any device. Rebuild its data with `python scripts/export_dashboard.py` after a new backtest.
+
 ```
-python -m unittest discover -s tests       # 30 safety/integrity tests
+python -m unittest discover -s tests       # 39 safety/integrity/web tests
+python -m cryptobot web                    # local control panel on http://127.0.0.1:8050
 python -m cryptobot fetch-data             # Kraken CAD + Coinbase USD daily history
 python -m cryptobot backtest               # strategy comparison -> data/backtest_report.txt
 python -m cryptobot run                    # one paper cycle (cron it hourly via scripts/run_bot.sh)
@@ -25,5 +31,7 @@ python -m cryptobot approve                # explicit live-trading approval (aft
 | `cryptobot/bot.py` | One cycle: data → checks → signal → orders → ledger → alerts |
 | `cryptobot/kraken.py` | Minimal Kraken REST client plus withdraw-permission canary |
 | `cryptobot/backtest.py` | No-look-ahead daily backtester with fees and slippage |
+| `cryptobot/web.py` | Local control panel (stdlib HTTP server, server-rendered SVG charts) |
+| `scripts/export_dashboard.py` | Data files for the hosted dashboard (`data/dashboard/`) |
 
 Not financial advice. You can lose the entire amount.

@@ -1,0 +1,47 @@
+[
+ {
+  "opportunity": "Coinbase Learning Rewards",
+  "you_get": "Small amounts of real tokens (rotating, often not ETH)",
+  "real_money": "Yes",
+  "id_required": "Yes",
+  "payment_required": "No",
+  "status": "Canada listed by third parties; current availability not confirmed",
+  "link": "https://coinledger.io/tools/learn-and-earn-crypto"
+ },
+ {
+  "opportunity": "Security bug bounties paid in crypto",
+  "you_get": "Real ETH or stablecoins for valid findings",
+  "real_money": "Yes",
+  "id_required": "Usually",
+  "payment_required": "No",
+  "status": "Paid work, not a giveaway; programs not verified this session",
+  "link": "https://ethereum.org/bug-bounty/"
+ },
+ {
+  "opportunity": "Open-source bounties and grants",
+  "you_get": "Real tokens or stablecoins for contributions",
+  "real_money": "Yes",
+  "id_required": "Varies",
+  "payment_required": "No",
+  "status": "Paid work; check the project's official repo",
+  "link": "https://www.gitcoin.co/"
+ },
+ {
+  "opportunity": "Shakepay Shaking Sats",
+  "you_get": "Small amounts of real BTC (not ETH)",
+  "real_money": "Yes",
+  "id_required": "Yes",
+  "payment_required": "Tied to account activity",
+  "status": "Could not confirm it still runs in 2026",
+  "link": "https://shakepay.com/"
+ },
+ {
+  "opportunity": "Sepolia / Hoodi testnet faucets",
+  "you_get": "Testnet ETH for practice only",
+  "real_money": "No: zero value, cannot be sold",
+  "id_required": "Some need a login",
+  "payment_required": "No",
+  "status": "Listed on ethereum.org",
+  "link": "https://ethereum.org/developers/docs/networks/"
+ }
+]

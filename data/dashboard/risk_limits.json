@@ -1,0 +1,92 @@
+[
+ {
+  "rule": "Total money the bot may use",
+  "value": "CAD 50.00",
+  "enforced": "Config refuses more than 50; buys can never push cost above it"
+ },
+ {
+  "rule": "Adding money",
+  "value": "Never",
+  "enforced": "The exchange client has no deposit or withdrawal functions"
+ },
+ {
+  "rule": "Buying more after a loss",
+  "value": "Never",
+  "enforced": "Buys use only the bot's own remaining cash"
+ },
+ {
+  "rule": "Bitcoin share of portfolio",
+  "value": "up to 100%",
+  "enforced": "Checked on every buy"
+ },
+ {
+  "rule": "Ether share of portfolio",
+  "value": "up to 40% (target 0%)",
+  "enforced": "Checked on every buy"
+ },
+ {
+  "rule": "Orders per day",
+  "value": "2",
+  "enforced": "Checked on every order"
+ },
+ {
+  "rule": "Orders per 30 days",
+  "value": "6",
+  "enforced": "Checked on every order"
+ },
+ {
+  "rule": "Days between trades in one coin",
+  "value": "6",
+  "enforced": "Checked on every order"
+ },
+ {
+  "rule": "Order size",
+  "value": "CAD 5 to 50",
+  "enforced": "Plus the exchange's own minimums"
+ },
+ {
+  "rule": "Lifetime fee budget",
+  "value": "CAD 2.50",
+  "enforced": "Bot stops trading until you approve again"
+ },
+ {
+  "rule": "Order type",
+  "value": "Limit, maker-only, 1-hour expiry",
+  "enforced": "Market, stop, margin and futures orders do not exist in the code"
+ },
+ {
+  "rule": "Big drop safety",
+  "value": "No new buys below CAD 25",
+  "enforced": "Needs your review; the bot does not panic-sell"
+ },
+ {
+  "rule": "Unusual market move",
+  "value": "Pause above \u00b115% in 24 h",
+  "enforced": "Checked every run"
+ },
+ {
+  "rule": "Wide spread",
+  "value": "Pause above 1%",
+  "enforced": "Checked every run"
+ },
+ {
+  "rule": "Stale or bad data",
+  "value": "Pause if data is over 120 s old",
+  "enforced": "Checked every run"
+ },
+ {
+  "rule": "Repeated errors",
+  "value": "Pause after 3 in a row",
+  "enforced": "Checked every run"
+ },
+ {
+  "rule": "API key can withdraw",
+  "value": "Refuse to trade",
+  "enforced": "Permission test before every live run"
+ },
+ {
+  "rule": "Live trading",
+  "value": "Off until you approve",
+  "enforced": "4 gates: config flag, typed approval, secret phrase, kill switch off"
+ }
+]

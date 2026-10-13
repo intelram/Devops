@@ -15,6 +15,29 @@ LIVE_ENV_VAR = "CRYPTOBOT_LIVE"
 LIVE_ENV_VALUE = "I_AUTHORIZE_REAL_MONEY"
 
 
+def set_state_dir(path):
+    """Point state, kill switch and approval at another folder (tests, web app)."""
+    global STATE_DIR, KILL_SWITCH, APPROVAL_FILE
+    STATE_DIR = Path(path)
+    KILL_SWITCH = STATE_DIR / "KILL"
+    APPROVAL_FILE = STATE_DIR / "approval.json"
+
+
+def kill_active():
+    return KILL_SWITCH.exists()
+
+
+def set_kill(note=""):
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    import time
+    KILL_SWITCH.write_text(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()) + (f" {note}" if note else ""))
+    return KILL_SWITCH
+
+
+def clear_kill():
+    KILL_SWITCH.unlink(missing_ok=True)
+
+
 def load_config(path=None):
     path = Path(path or CONFIG_PATH)
     with open(path) as f:

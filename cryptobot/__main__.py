@@ -4,6 +4,7 @@
   status             portfolio summary + live-gate status
   approve            record explicit approval of the CURRENT risk config for live trading
   kill / unkill      emergency stop switch (cancels open orders on next run, blocks trading)
+  web [--port 8050]  local control panel at http://127.0.0.1:8050 (loopback only)
   fetch-data         download historical daily candles into data/
   backtest           run the strategy comparison on cached data
 """
@@ -12,8 +13,8 @@ import json
 import sys
 import time
 
-from .config import (KILL_SWITCH, STATE_DIR, config_hash, live_trading_status, load_config,
-                     write_approval)
+from . import config as cfgmod
+from .config import config_hash, live_trading_status, load_config, write_approval
 
 
 def main(argv=None):
@@ -33,7 +34,7 @@ def main(argv=None):
         for r in reasons:
             print(f"  - {r}")
         for mode in ("paper", "live"):
-            if (STATE_DIR / f"state_{mode}.json").exists():
+            if (cfgmod.STATE_DIR / f"state_{mode}.json").exists():
                 print(Ledger(cfg, mode).summary(cfg))
     elif cmd == "approve":
         print(json.dumps({k: cfg[k] for k in ("capital", "universe", "strategy", "orders",
@@ -49,15 +50,18 @@ def main(argv=None):
         print(f"Approved config {rec['config_hash'][:16]}. You must ALSO set live_trading_enabled=true "
               "(which changes the hash, so set it BEFORE approving) and export CRYPTOBOT_LIVE.")
     elif cmd == "kill":
-        STATE_DIR.mkdir(parents=True, exist_ok=True)
-        KILL_SWITCH.write_text(time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()))
-        print(f"Kill switch set at {KILL_SWITCH}. Next run cancels open orders and does not trade.")
+        path = cfgmod.set_kill("cli")
+        print(f"Kill switch set at {path}. Next run cancels open orders and does not trade.")
     elif cmd == "unkill":
-        KILL_SWITCH.unlink(missing_ok=True)
+        cfgmod.clear_kill()
         print("Kill switch removed.")
     elif cmd == "fetch-data":
         from .report import fetch_all
         fetch_all()
+    elif cmd == "web":
+        from .web import serve
+        port = int(argv[argv.index("--port") + 1]) if "--port" in argv else 8050
+        serve(port=port)
     elif cmd == "backtest":
         from .report import main as report_main
         report_main()

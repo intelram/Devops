@@ -195,9 +195,10 @@ I ran one **paper cycle** against live Kraken data on 2026-10-13 05:55 UTC. Sign
 **Phase A: paper only (start here, takes 8+ weeks)**
 1. Install Python 3.10+ on your computer. No other packages are needed.
 2. `git clone` this repo, `cd Devops`
-3. `python -m unittest discover -s tests` should report 30 tests OK.
+3. `python -m unittest discover -s tests` should report 39 tests OK.
 4. `python -m cryptobot fetch-data && python -m cryptobot backtest` reproduces the tables above.
 5. `python -m cryptobot run` runs one paper cycle. `python -m cryptobot status` shows the portfolio.
+   Or use the **control panel**: run `python -m cryptobot web` and open http://127.0.0.1:8050. It shows the portfolio, orders, event log, backtests and live gates, and has buttons to run a paper cycle and toggle the kill switch. It only listens on your own computer, and it cannot approve live trading.
 6. Schedule it hourly (Linux/macOS `crontab -e`):
    `7 * * * * /full/path/Devops/scripts/run_bot.sh >> /full/path/Devops/state/cron.log 2>&1`
    On Windows: Task Scheduler → hourly → `python -m cryptobot run` in the repo folder.
@@ -240,7 +241,7 @@ I ran one **paper cycle** against live Kraken data on 2026-10-13 05:55 UTC. Sign
 
 **Emergency shutdown (fastest first)**
 1. **Kraken website → Settings → API → delete the key.** This works immediately, even if your computer is compromised.
-2. On the bot machine, run `python -m cryptobot kill`. The next run cancels all open orders and refuses to trade.
+2. On the bot machine, run `python -m cryptobot kill` (or press **Turn kill switch ON** in the control panel). The next run cancels all open orders and refuses to trade.
 3. Disable the cron job (`crontab -e`, comment out the line).
 4. If you suspect compromise: change your Kraken password, reset 2FA, review Kraken's login and API history, and contact Kraken support through the official site only.
 5. To resume: create a new key, then `unkill`, then re-run `approve`.

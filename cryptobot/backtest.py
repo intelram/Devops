@@ -13,7 +13,7 @@ from . import strategy
 DAY = 86400
 
 
-def run_backtest(cfg, bars, fee_rate, slippage, start_index=None):
+def run_backtest(cfg, bars, fee_rate, slippage, start_index=None, return_curve=False):
     """bars: {asset: [(ts, open, high, low, close), ...]} aligned on the same timestamps."""
     assets = list(cfg["strategy"]["targets"].keys())
     ts_list = [b[0] for b in bars[assets[0]]]
@@ -69,6 +69,9 @@ def run_backtest(cfg, bars, fee_rate, slippage, start_index=None):
     res = summarize(cap, equity_curve, fees, trades)
     res["fee_budget_hit"] = (datetime.fromtimestamp(fee_budget_hit, timezone.utc).date().isoformat()
                              if fee_budget_hit else None)
+    if return_curve:
+        res["curve"] = [(datetime.fromtimestamp(t, timezone.utc).date().isoformat(), round(v, 4))
+                        for t, v in equity_curve]
     return res
 
 

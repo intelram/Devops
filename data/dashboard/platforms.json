@@ -1,0 +1,80 @@
+[
+ {
+  "platform": "Kraken Pro",
+  "registered": "Yes (restricted dealer)",
+  "btc_cad_direct": "Yes",
+  "maker_fee_pct": 0.4,
+  "taker_fee_pct": 0.8,
+  "cad_withdrawal": "CAD 10 (e-Transfer)",
+  "min_btc_order": "0.00005 BTC (~CAD 6)",
+  "trading_api": "Yes, withdraw can be disabled",
+  "confidence": "Live API + official docs",
+  "verdict": "Recommended",
+  "link": "https://www.kraken.com/features/fee-schedule"
+ },
+ {
+  "platform": "NDAX",
+  "registered": "Yes",
+  "btc_cad_direct": "Yes",
+  "maker_fee_pct": 0.2,
+  "taker_fee_pct": 0.2,
+  "cad_withdrawal": "CAD 1.50 (e-Transfer)",
+  "min_btc_order": "Not verified",
+  "trading_api": "Not verified",
+  "confidence": "Third-party reviews only",
+  "verdict": "Cheapest fees; not yet supported by the bot",
+  "link": "https://www.finder.com/ca/cryptocurrency/exchanges/ndax-review"
+ },
+ {
+  "platform": "Coinbase Advanced",
+  "registered": "Yes (restricted dealer)",
+  "btc_cad_direct": "No (USDC-CAD only)",
+  "maker_fee_pct": 0.4,
+  "taker_fee_pct": 0.6,
+  "cad_withdrawal": "Varies",
+  "min_btc_order": "Not verified",
+  "trading_api": "Yes",
+  "confidence": "Live API (pairs); fees third-party",
+  "verdict": "Two trades and two fees to buy BTC with CAD",
+  "link": "https://www.finder.com/ca/coinbase-exchange-review"
+ },
+ {
+  "platform": "Shakepay",
+  "registered": "Yes (investment dealer)",
+  "btc_cad_direct": "Yes (app)",
+  "maker_fee_pct": null,
+  "taker_fee_pct": null,
+  "cad_withdrawal": "Not verified",
+  "min_btc_order": "Small",
+  "trading_api": "No",
+  "confidence": "Third-party reviews only",
+  "verdict": "Spread-based; recurring buys only",
+  "link": "https://koinly.io/blog/best-crypto-exchange-canada/"
+ },
+ {
+  "platform": "Newton",
+  "registered": "Yes",
+  "btc_cad_direct": "Yes (app)",
+  "maker_fee_pct": null,
+  "taker_fee_pct": null,
+  "cad_withdrawal": "Not verified",
+  "min_btc_order": "Small",
+  "trading_api": "No",
+  "confidence": "Official blog + third-party",
+  "verdict": "Spread-based; no automation",
+  "link": "https://www.newton.co/blog/a-broader-newton-signature-program"
+ },
+ {
+  "platform": "Pionex",
+  "registered": "No evidence for Canada",
+  "btc_cad_direct": "No (crypto deposits)",
+  "maker_fee_pct": 0.05,
+  "taker_fee_pct": 0.05,
+  "cad_withdrawal": "No CAD",
+  "min_btc_order": "Not verified",
+  "trading_api": "Built-in bots",
+  "confidence": "Third-party reviews only",
+  "verdict": "Excluded: not registered in Canada",
+  "link": "https://coinbureau.com/review/pionex-review/"
+ }
+]
