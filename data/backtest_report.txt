@@ -1,0 +1,59 @@
+
+=== Kraken BTC/CAD + ETH/CAD daily (actual CAD market) ===
+strategy                                      scenario                                   final    ret%  CAGR%  maxDD% trades   fees  fee-budget-hit
+Buy & hold 100% BTC (benchmark)               maker (0.40% fee + 0.05% slip)             39.86   -20.3  -14.7   -52.1      1   0.20  -
+Buy & hold 100% BTC (benchmark)               taker (0.80% fee + 0.15% slip)             39.66   -20.7  -15.0   -52.1      1   0.40  -
+Buy & hold 100% BTC (benchmark)               app/instant (1.00% fee + 0.50% spread)     39.44   -21.1  -15.4   -52.1      1   0.50  -
+Buy & hold 70% BTC / 30% ETH                  maker (0.40% fee + 0.05% slip)             42.39   -15.2  -11.0   -57.5      2   0.20  -
+Buy & hold 70% BTC / 30% ETH                  taker (0.80% fee + 0.15% slip)             42.18   -15.6  -11.3   -57.5      2   0.40  -
+Buy & hold 70% BTC / 30% ETH                  app/instant (1.00% fee + 0.50% spread)     41.95   -16.1  -11.6   -57.5      2   0.50  -
+Scheduled entry BTC (5 x CAD10, 14d apart)    maker (0.40% fee + 0.05% slip)             40.11   -19.8  -14.4   -51.7      5   0.20  -
+Scheduled entry BTC (5 x CAD10, 14d apart)    taker (0.80% fee + 0.15% slip)             39.87   -20.3  -14.7   -51.9      5   0.40  -
+Scheduled entry BTC (5 x CAD10, 14d apart)    app/instant (1.00% fee + 0.50% spread)     39.60   -20.8  -15.1   -52.1      5   0.50  -
+Trend filter BTC (200d SMA, weekly)           maker (0.40% fee + 0.05% slip)             55.05    10.1    7.0   -17.8      3   0.60  -
+Trend filter BTC (200d SMA, weekly)           taker (0.80% fee + 0.15% slip)             54.26     8.5    5.9   -17.8      3   1.20  -
+Trend filter BTC (200d SMA, weekly)           app/instant (1.00% fee + 0.50% spread)     53.37     6.7    4.7   -18.5      3   1.49  -
+Trend filter 70/30 BTC/ETH (200d SMA)         maker (0.40% fee + 0.05% slip)             54.88     9.8    6.8   -23.3      6   0.61  -
+Trend filter 70/30 BTC/ETH (200d SMA)         taker (0.80% fee + 0.15% slip)             54.10     8.2    5.7   -24.1      6   1.21  -
+Trend filter 70/30 BTC/ETH (200d SMA)         app/instant (1.00% fee + 0.50% spread)     53.25     6.5    4.5   -24.9      6   1.51  -
+Rebalance 70/30 (10pp band, weekly)           maker (0.40% fee + 0.05% slip)             45.66    -8.7   -6.2   -53.6      4   0.25  -
+Rebalance 70/30 (10pp band, weekly)           taker (0.80% fee + 0.15% slip)             45.25    -9.5   -6.8   -53.6      4   0.49  -
+Rebalance 70/30 (10pp band, weekly)           app/instant (1.00% fee + 0.50% spread)     45.06    -9.9   -7.0   -53.6      4   0.62  -
+[sensitivity] Trend filter BTC 100d SMA       maker (0.40% fee + 0.05% slip)             42.68   -14.6  -10.5   -35.3      9   1.70  -
+[sensitivity] Trend filter BTC 100d SMA       taker (0.80% fee + 0.15% slip)             40.79   -18.4  -13.3   -37.2      9   3.34  2026-04-27
+[sensitivity] Trend filter BTC 100d SMA       app/instant (1.00% fee + 0.50% spread)     38.81   -22.4  -16.3   -39.3      9   4.09  2025-11-03
+window: 2025-05-11 -> 2026-10-12
+
+=== Coinbase BTC/USD + ETH/USD daily since 2017 (USD proxy, long history) ===
+strategy                                      scenario                                   final    ret%  CAGR%  maxDD% trades   fees  fee-budget-hit
+Buy & hold 100% BTC (benchmark)               maker (0.40% fee + 0.05% slip)           1801.13  3502.3   47.4   -83.8      1   0.20  -
+Buy & hold 100% BTC (benchmark)               taker (0.80% fee + 0.15% slip)           1792.11  3484.2   47.3   -83.8      1   0.40  -
+Buy & hold 100% BTC (benchmark)               app/instant (1.00% fee + 0.50% spread)   1782.27  3464.5   47.2   -83.8      1   0.50  -
+Buy & hold 70% BTC / 30% ETH                  maker (0.40% fee + 0.05% slip)           1448.22  2796.4   44.0   -84.5      2   0.20  -
+Buy & hold 70% BTC / 30% ETH                  taker (0.80% fee + 0.15% slip)           1440.96  2781.9   43.9   -84.5      2   0.40  -
+Buy & hold 70% BTC / 30% ETH                  app/instant (1.00% fee + 0.50% spread)   1433.05  2766.1   43.8   -84.5      2   0.50  -
+Scheduled entry BTC (5 x CAD10, 14d apart)    maker (0.40% fee + 0.05% slip)           1193.71  2287.4   41.0   -81.0      5   0.18  -
+Scheduled entry BTC (5 x CAD10, 14d apart)    taker (0.80% fee + 0.15% slip)           1192.81  2285.6   41.0   -81.0      5   0.37  -
+Scheduled entry BTC (5 x CAD10, 14d apart)    app/instant (1.00% fee + 0.50% spread)   1191.80  2283.6   41.0   -81.1      5   0.47  -
+Trend filter BTC (200d SMA, weekly)           maker (0.40% fee + 0.05% slip)            342.61   585.2   23.2   -64.9     35   8.18  2020-05-04
+Trend filter BTC (200d SMA, weekly)           taker (0.80% fee + 0.15% slip)            330.95   561.9   22.7   -64.9     35  16.30  2019-04-08
+Trend filter BTC (200d SMA, weekly)           app/instant (1.00% fee + 0.50% spread)    318.27   536.5   22.2   -64.9     35  20.28  2018-03-19
+Trend filter 70/30 BTC/ETH (200d SMA)         maker (0.40% fee + 0.05% slip)            420.05   740.1   25.9   -58.0     62   8.01  2020-05-04
+Trend filter 70/30 BTC/ETH (200d SMA)         taker (0.80% fee + 0.15% slip)            408.21   716.4   25.5   -58.4     62  15.97  2019-04-08
+Trend filter 70/30 BTC/ETH (200d SMA)         app/instant (1.00% fee + 0.50% spread)    395.34   690.7   25.1   -59.0     62  19.86  2018-04-30
+Rebalance 70/30 (10pp band, weekly)           maker (0.40% fee + 0.05% slip)           1264.59  2429.2   41.9   -80.9      5   0.97  -
+Rebalance 70/30 (10pp band, weekly)           taker (0.80% fee + 0.15% slip)           1258.39  2416.8   41.8   -80.9      5   1.94  -
+Rebalance 70/30 (10pp band, weekly)           app/instant (1.00% fee + 0.50% spread)   1251.62  2403.2   41.7   -80.9      5   2.42  -
+[sensitivity] Trend filter BTC 100d SMA       maker (0.40% fee + 0.05% slip)            433.00   766.0   26.3   -64.5     50  11.39  2019-09-02
+[sensitivity] Trend filter BTC 100d SMA       taker (0.80% fee + 0.15% slip)            416.86   733.7   25.8   -65.1     50  22.71  2018-07-30
+[sensitivity] Trend filter BTC 100d SMA       app/instant (1.00% fee + 0.50% spread)    399.32   698.6   25.2   -65.9     50  28.25  2018-05-14
+window: 2017-07-20 -> 2026-10-12
+
+=== Rolling 2-year windows (quarterly starts), taker scenario, USD proxy: 30 windows ===
+Buy & hold 100% BTC (benchmark)               median ret    92.1%  worst   -53.6%  beats B&H 0/30  shallower DD 0/30  windows losing money 7/30
+Buy & hold 70% BTC / 30% ETH                  median ret   117.5%  worst   -54.8%  beats B&H 11/30  shallower DD 1/30  windows losing money 9/30
+Scheduled entry BTC (5 x CAD10, 14d apart)    median ret   101.2%  worst   -53.4%  beats B&H 12/30  shallower DD 20/30  windows losing money 6/30
+Trend filter BTC (200d SMA, weekly)           median ret    64.3%  worst   -31.5%  beats B&H 11/30  shallower DD 24/30  windows losing money 6/30
+Trend filter 70/30 BTC/ETH (200d SMA)         median ret    58.3%  worst   -37.9%  beats B&H 11/30  shallower DD 24/30  windows losing money 5/30
+Rebalance 70/30 (10pp band, weekly)           median ret   105.1%  worst   -57.7%  beats B&H 13/30  shallower DD 12/30  windows losing money 9/30
+[sensitivity] Trend filter BTC 100d SMA       median ret    74.2%  worst   -48.5%  beats B&H 12/30  shallower DD 24/30  windows losing money 7/30

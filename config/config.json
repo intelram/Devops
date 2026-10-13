@@ -1,0 +1,60 @@
+{
+  "_comment": "Risk limits. Any edit changes the config hash and automatically revokes live-trading approval until you re-run `python -m cryptobot approve`.",
+
+  "exchange": "kraken",
+  "quote_currency": "CAD",
+
+  "live_trading_enabled": false,
+
+  "capital": {
+    "max_capital_cad": 50.0,
+    "_note": "Hard ceiling on total CAD the bot may ever spend on buys (net of sells). The bot has no deposit or withdrawal code paths at all."
+  },
+
+  "universe": {
+    "BTC": {"pair": "XBTCAD", "max_allocation": 1.00},
+    "ETH": {"pair": "ETHCAD", "max_allocation": 0.40}
+  },
+
+  "strategy": {
+    "name": "trend_filter",
+    "_choices": ["hold", "scheduled_entry", "trend_filter", "rebalance"],
+    "targets": {"BTC": 1.0},
+    "sma_days": 200,
+    "check_weekday": 0,
+    "scheduled_entry_tranches": 5,
+    "scheduled_entry_interval_days": 14,
+    "rebalance_band": 0.10
+  },
+
+  "orders": {
+    "order_type": "post_only_limit",
+    "limit_order_ttl_seconds": 3600,
+    "min_order_cad": 5.0,
+    "max_order_cad": 50.0,
+    "assumed_fee_rate": 0.008,
+    "max_fee_rate_per_order": 0.01,
+    "max_slippage_vs_mid": 0.005
+  },
+
+  "activity_limits": {
+    "max_orders_per_day": 2,
+    "max_orders_per_30_days": 6,
+    "min_days_between_trades_same_asset": 6,
+    "max_cumulative_fees_cad": 2.50
+  },
+
+  "safety": {
+    "max_ticker_age_seconds": 120,
+    "max_spread_pct": 0.01,
+    "max_24h_move_pct": 0.15,
+    "max_ticker_vs_close_deviation_pct": 0.10,
+    "drawdown_pause_pct": 0.50,
+    "max_consecutive_errors": 3
+  },
+
+  "alerts": {
+    "_note": "Optional. Set CRYPTOBOT_NTFY_TOPIC env var to receive push alerts via the free ntfy.sh service. Use a long random topic name; ntfy topics are public to anyone who knows the name.",
+    "daily_summary_hour_utc": 14
+  }
+}

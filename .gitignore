@@ -1,0 +1,6 @@
+state/
+.env
+*.env
+__pycache__/
+*.pyc
+.claude-flow/

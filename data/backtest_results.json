@@ -1,0 +1,1535 @@
+[
+  {
+    "dataset": "Kraken BTC/CAD + ETH/CAD daily (actual CAD market)",
+    "rows": [
+      {
+        "strategy": "Buy & hold 100% BTC (benchmark)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 39.86,
+        "return_pct": -20.3,
+        "cagr_pct": -14.7,
+        "max_drawdown_pct": -52.1,
+        "trades": 1,
+        "fees_cad": 0.2,
+        "min_equity_cad": 28.43,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 100% BTC (benchmark)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 39.66,
+        "return_pct": -20.7,
+        "cagr_pct": -15.0,
+        "max_drawdown_pct": -52.1,
+        "trades": 1,
+        "fees_cad": 0.4,
+        "min_equity_cad": 28.29,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 100% BTC (benchmark)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 39.44,
+        "return_pct": -21.1,
+        "cagr_pct": -15.4,
+        "max_drawdown_pct": -52.1,
+        "trades": 1,
+        "fees_cad": 0.5,
+        "min_equity_cad": 28.13,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 70% BTC / 30% ETH",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 42.39,
+        "return_pct": -15.2,
+        "cagr_pct": -11.0,
+        "max_drawdown_pct": -57.5,
+        "trades": 2,
+        "fees_cad": 0.2,
+        "min_equity_cad": 29.17,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 70% BTC / 30% ETH",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 42.18,
+        "return_pct": -15.6,
+        "cagr_pct": -11.3,
+        "max_drawdown_pct": -57.5,
+        "trades": 2,
+        "fees_cad": 0.4,
+        "min_equity_cad": 29.02,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 70% BTC / 30% ETH",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 41.95,
+        "return_pct": -16.1,
+        "cagr_pct": -11.6,
+        "max_drawdown_pct": -57.5,
+        "trades": 2,
+        "fees_cad": 0.5,
+        "min_equity_cad": 28.86,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Scheduled entry BTC (5 x CAD10, 14d apart)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 40.11,
+        "return_pct": -19.8,
+        "cagr_pct": -14.4,
+        "max_drawdown_pct": -51.7,
+        "trades": 5,
+        "fees_cad": 0.2,
+        "min_equity_cad": 28.74,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Scheduled entry BTC (5 x CAD10, 14d apart)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 39.87,
+        "return_pct": -20.3,
+        "cagr_pct": -14.7,
+        "max_drawdown_pct": -51.9,
+        "trades": 5,
+        "fees_cad": 0.4,
+        "min_equity_cad": 28.51,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Scheduled entry BTC (5 x CAD10, 14d apart)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 39.6,
+        "return_pct": -20.8,
+        "cagr_pct": -15.1,
+        "max_drawdown_pct": -52.1,
+        "trades": 5,
+        "fees_cad": 0.5,
+        "min_equity_cad": 28.25,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Trend filter BTC (200d SMA, weekly)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 55.05,
+        "return_pct": 10.1,
+        "cagr_pct": 7.0,
+        "max_drawdown_pct": -17.8,
+        "trades": 3,
+        "fees_cad": 0.6,
+        "min_equity_cad": 47.6,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Trend filter BTC (200d SMA, weekly)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 54.26,
+        "return_pct": 8.5,
+        "cagr_pct": 5.9,
+        "max_drawdown_pct": -17.8,
+        "trades": 3,
+        "fees_cad": 1.2,
+        "min_equity_cad": 47.36,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Trend filter BTC (200d SMA, weekly)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 53.37,
+        "return_pct": 6.7,
+        "cagr_pct": 4.7,
+        "max_drawdown_pct": -18.5,
+        "trades": 3,
+        "fees_cad": 1.49,
+        "min_equity_cad": 47.1,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Trend filter 70/30 BTC/ETH (200d SMA)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 54.88,
+        "return_pct": 9.8,
+        "cagr_pct": 6.8,
+        "max_drawdown_pct": -23.3,
+        "trades": 6,
+        "fees_cad": 0.61,
+        "min_equity_cad": 48.32,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Trend filter 70/30 BTC/ETH (200d SMA)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 54.1,
+        "return_pct": 8.2,
+        "cagr_pct": 5.7,
+        "max_drawdown_pct": -24.1,
+        "trades": 6,
+        "fees_cad": 1.21,
+        "min_equity_cad": 48.16,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Trend filter 70/30 BTC/ETH (200d SMA)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 53.25,
+        "return_pct": 6.5,
+        "cagr_pct": 4.5,
+        "max_drawdown_pct": -24.9,
+        "trades": 6,
+        "fees_cad": 1.51,
+        "min_equity_cad": 47.97,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Rebalance 70/30 (10pp band, weekly)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 45.66,
+        "return_pct": -8.7,
+        "cagr_pct": -6.2,
+        "max_drawdown_pct": -53.6,
+        "trades": 4,
+        "fees_cad": 0.25,
+        "min_equity_cad": 32.15,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Rebalance 70/30 (10pp band, weekly)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 45.25,
+        "return_pct": -9.5,
+        "cagr_pct": -6.8,
+        "max_drawdown_pct": -53.6,
+        "trades": 4,
+        "fees_cad": 0.49,
+        "min_equity_cad": 31.92,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Rebalance 70/30 (10pp band, weekly)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 45.06,
+        "return_pct": -9.9,
+        "cagr_pct": -7.0,
+        "max_drawdown_pct": -53.6,
+        "trades": 4,
+        "fees_cad": 0.62,
+        "min_equity_cad": 31.72,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "[sensitivity] Trend filter BTC 100d SMA",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 42.68,
+        "return_pct": -14.6,
+        "cagr_pct": -10.5,
+        "max_drawdown_pct": -35.3,
+        "trades": 9,
+        "fees_cad": 1.7,
+        "min_equity_cad": 37.66,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "[sensitivity] Trend filter BTC 100d SMA",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 40.79,
+        "return_pct": -18.4,
+        "cagr_pct": -13.3,
+        "max_drawdown_pct": -37.2,
+        "trades": 9,
+        "fees_cad": 3.34,
+        "min_equity_cad": 36.35,
+        "fee_budget_hit": "2026-04-27"
+      },
+      {
+        "strategy": "[sensitivity] Trend filter BTC 100d SMA",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2025-05-11",
+        "end": "2026-10-12",
+        "final_cad": 38.81,
+        "return_pct": -22.4,
+        "cagr_pct": -16.3,
+        "max_drawdown_pct": -39.3,
+        "trades": 9,
+        "fees_cad": 4.09,
+        "min_equity_cad": 34.97,
+        "fee_budget_hit": "2025-11-03"
+      }
+    ]
+  },
+  {
+    "dataset": "Coinbase BTC/USD + ETH/USD daily since 2017 (USD proxy, long history)",
+    "rows": [
+      {
+        "strategy": "Buy & hold 100% BTC (benchmark)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1801.13,
+        "return_pct": 3502.3,
+        "cagr_pct": 47.4,
+        "max_drawdown_pct": -83.8,
+        "trades": 1,
+        "fees_cad": 0.2,
+        "min_equity_cad": 55.66,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 100% BTC (benchmark)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1792.11,
+        "return_pct": 3484.2,
+        "cagr_pct": 47.3,
+        "max_drawdown_pct": -83.8,
+        "trades": 1,
+        "fees_cad": 0.4,
+        "min_equity_cad": 55.38,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 100% BTC (benchmark)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1782.27,
+        "return_pct": 3464.5,
+        "cagr_pct": 47.2,
+        "max_drawdown_pct": -83.8,
+        "trades": 1,
+        "fees_cad": 0.5,
+        "min_equity_cad": 55.08,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 70% BTC / 30% ETH",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1448.22,
+        "return_pct": 2796.4,
+        "cagr_pct": 44.0,
+        "max_drawdown_pct": -84.5,
+        "trades": 2,
+        "fees_cad": 0.2,
+        "min_equity_cad": 54.54,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 70% BTC / 30% ETH",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1440.96,
+        "return_pct": 2781.9,
+        "cagr_pct": 43.9,
+        "max_drawdown_pct": -84.5,
+        "trades": 2,
+        "fees_cad": 0.4,
+        "min_equity_cad": 54.27,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Buy & hold 70% BTC / 30% ETH",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1433.05,
+        "return_pct": 2766.1,
+        "cagr_pct": 43.8,
+        "max_drawdown_pct": -84.5,
+        "trades": 2,
+        "fees_cad": 0.5,
+        "min_equity_cad": 53.97,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Scheduled entry BTC (5 x CAD10, 14d apart)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1193.71,
+        "return_pct": 2287.4,
+        "cagr_pct": 41.0,
+        "max_drawdown_pct": -81.0,
+        "trades": 5,
+        "fees_cad": 0.18,
+        "min_equity_cad": 50.2,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Scheduled entry BTC (5 x CAD10, 14d apart)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1192.81,
+        "return_pct": 2285.6,
+        "cagr_pct": 41.0,
+        "max_drawdown_pct": -81.0,
+        "trades": 5,
+        "fees_cad": 0.37,
+        "min_equity_cad": 49.95,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Scheduled entry BTC (5 x CAD10, 14d apart)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1191.8,
+        "return_pct": 2283.6,
+        "cagr_pct": 41.0,
+        "max_drawdown_pct": -81.1,
+        "trades": 5,
+        "fees_cad": 0.47,
+        "min_equity_cad": 49.67,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Trend filter BTC (200d SMA, weekly)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 342.61,
+        "return_pct": 585.2,
+        "cagr_pct": 23.2,
+        "max_drawdown_pct": -64.9,
+        "trades": 35,
+        "fees_cad": 8.18,
+        "min_equity_cad": 45.63,
+        "fee_budget_hit": "2020-05-04"
+      },
+      {
+        "strategy": "Trend filter BTC (200d SMA, weekly)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 330.95,
+        "return_pct": 561.9,
+        "cagr_pct": 22.7,
+        "max_drawdown_pct": -64.9,
+        "trades": 35,
+        "fees_cad": 16.3,
+        "min_equity_cad": 45.41,
+        "fee_budget_hit": "2019-04-08"
+      },
+      {
+        "strategy": "Trend filter BTC (200d SMA, weekly)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 318.27,
+        "return_pct": 536.5,
+        "cagr_pct": 22.2,
+        "max_drawdown_pct": -64.9,
+        "trades": 35,
+        "fees_cad": 20.28,
+        "min_equity_cad": 45.16,
+        "fee_budget_hit": "2018-03-19"
+      },
+      {
+        "strategy": "Trend filter 70/30 BTC/ETH (200d SMA)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 420.05,
+        "return_pct": 740.1,
+        "cagr_pct": 25.9,
+        "max_drawdown_pct": -58.0,
+        "trades": 62,
+        "fees_cad": 8.01,
+        "min_equity_cad": 45.24,
+        "fee_budget_hit": "2020-05-04"
+      },
+      {
+        "strategy": "Trend filter 70/30 BTC/ETH (200d SMA)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 408.21,
+        "return_pct": 716.4,
+        "cagr_pct": 25.5,
+        "max_drawdown_pct": -58.4,
+        "trades": 62,
+        "fees_cad": 15.97,
+        "min_equity_cad": 45.01,
+        "fee_budget_hit": "2019-04-08"
+      },
+      {
+        "strategy": "Trend filter 70/30 BTC/ETH (200d SMA)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 395.34,
+        "return_pct": 690.7,
+        "cagr_pct": 25.1,
+        "max_drawdown_pct": -59.0,
+        "trades": 62,
+        "fees_cad": 19.86,
+        "min_equity_cad": 44.76,
+        "fee_budget_hit": "2018-04-30"
+      },
+      {
+        "strategy": "Rebalance 70/30 (10pp band, weekly)",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1264.59,
+        "return_pct": 2429.2,
+        "cagr_pct": 41.9,
+        "max_drawdown_pct": -80.9,
+        "trades": 5,
+        "fees_cad": 0.97,
+        "min_equity_cad": 45.24,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Rebalance 70/30 (10pp band, weekly)",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1258.39,
+        "return_pct": 2416.8,
+        "cagr_pct": 41.8,
+        "max_drawdown_pct": -80.9,
+        "trades": 5,
+        "fees_cad": 1.94,
+        "min_equity_cad": 45.01,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "Rebalance 70/30 (10pp band, weekly)",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 1251.62,
+        "return_pct": 2403.2,
+        "cagr_pct": 41.7,
+        "max_drawdown_pct": -80.9,
+        "trades": 5,
+        "fees_cad": 2.42,
+        "min_equity_cad": 44.76,
+        "fee_budget_hit": null
+      },
+      {
+        "strategy": "[sensitivity] Trend filter BTC 100d SMA",
+        "scenario": "maker (0.40% fee + 0.05% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 433.0,
+        "return_pct": 766.0,
+        "cagr_pct": 26.3,
+        "max_drawdown_pct": -64.5,
+        "trades": 50,
+        "fees_cad": 11.39,
+        "min_equity_cad": 45.63,
+        "fee_budget_hit": "2019-09-02"
+      },
+      {
+        "strategy": "[sensitivity] Trend filter BTC 100d SMA",
+        "scenario": "taker (0.80% fee + 0.15% slip)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 416.86,
+        "return_pct": 733.7,
+        "cagr_pct": 25.8,
+        "max_drawdown_pct": -65.1,
+        "trades": 50,
+        "fees_cad": 22.71,
+        "min_equity_cad": 45.41,
+        "fee_budget_hit": "2018-07-30"
+      },
+      {
+        "strategy": "[sensitivity] Trend filter BTC 100d SMA",
+        "scenario": "app/instant (1.00% fee + 0.50% spread)",
+        "start": "2017-07-20",
+        "end": "2026-10-12",
+        "final_cad": 399.32,
+        "return_pct": 698.6,
+        "cagr_pct": 25.2,
+        "max_drawdown_pct": -65.9,
+        "trades": 50,
+        "fees_cad": 28.25,
+        "min_equity_cad": 45.16,
+        "fee_budget_hit": "2018-05-14"
+      }
+    ]
+  },
+  {
+    "dataset": "Rolling 2-year windows (quarterly starts), taker scenario, USD proxy",
+    "rows": [
+      {
+        "start": "2017-07-20",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 362.1,
+          "mdd": -83.8
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 257.2,
+          "mdd": -84.5
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 213.9,
+          "mdd": -81.0
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 265.8,
+          "mdd": -64.9
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 227.5,
+          "mdd": -58.4
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 195.3,
+          "mdd": -80.9
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 325.1,
+          "mdd": -65.1
+        }
+      },
+      {
+        "start": "2017-10-19",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 41.3,
+          "mdd": -83.8
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 15.3,
+          "mdd": -84.8
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 7.7,
+          "mdd": -78.5
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 61.4,
+          "mdd": -67.5
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 57.5,
+          "mdd": -60.8
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 69.4,
+          "mdd": -75.8
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 130.0,
+          "mdd": -72.5
+        }
+      },
+      {
+        "start": "2018-01-18",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": -21.3,
+          "mdd": -75.1
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -40.0,
+          "mdd": -80.3
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": -9.5,
+          "mdd": -70.3
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": -24.9,
+          "mdd": -48.9
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": -37.9,
+          "mdd": -55.1
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -45.8,
+          "mdd": -79.3
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 17.4,
+          "mdd": -57.0
+        }
+      },
+      {
+        "start": "2018-04-19",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": -14.5,
+          "mdd": -67.5
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -30.5,
+          "mdd": -75.4
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": -10.2,
+          "mdd": -62.4
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 34.5,
+          "mdd": -45.4
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 2.1,
+          "mdd": -53.8
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -37.5,
+          "mdd": -75.0
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 55.3,
+          "mdd": -40.2
+        }
+      },
+      {
+        "start": "2018-07-19",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 22.9,
+          "mdd": -62.4
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 0.5,
+          "mdd": -67.7
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 32.3,
+          "mdd": -62.4
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 36.3,
+          "mdd": -47.3
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 19.4,
+          "mdd": -53.3
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -0.2,
+          "mdd": -67.9
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 73.5,
+          "mdd": -31.9
+        }
+      },
+      {
+        "start": "2018-10-18",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 74.1,
+          "mdd": -62.4
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 75.4,
+          "mdd": -63.6
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 125.2,
+          "mdd": -62.4
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 60.5,
+          "mdd": -47.3
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 58.3,
+          "mdd": -53.3
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 88.4,
+          "mdd": -60.9
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 168.2,
+          "mdd": -28.4
+        }
+      },
+      {
+        "start": "2019-01-17",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 908.6,
+          "mdd": -62.4
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 890.1,
+          "mdd": -63.6
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 857.4,
+          "mdd": -61.6
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 343.2,
+          "mdd": -47.3
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 388.5,
+          "mdd": -53.3
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 851.1,
+          "mdd": -58.6
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 411.8,
+          "mdd": -28.4
+        }
+      },
+      {
+        "start": "2019-04-18",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 1064.0,
+          "mdd": -62.4
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 1147.8,
+          "mdd": -63.6
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 751.7,
+          "mdd": -57.4
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 614.6,
+          "mdd": -47.5
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 786.8,
+          "mdd": -53.4
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 1042.4,
+          "mdd": -59.8
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 576.1,
+          "mdd": -29.8
+        }
+      },
+      {
+        "start": "2019-07-18",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 220.6,
+          "mdd": -59.5
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 388.1,
+          "mdd": -57.2
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 210.0,
+          "mdd": -54.4
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 137.5,
+          "mdd": -47.2
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 224.7,
+          "mdd": -49.9
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 344.9,
+          "mdd": -57.2
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 327.0,
+          "mdd": -27.9
+        }
+      },
+      {
+        "start": "2019-10-17",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 664.3,
+          "mdd": -53.2
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 1093.8,
+          "mdd": -56.1
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 659.1,
+          "mdd": -53.2
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 235.1,
+          "mdd": -48.3
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 383.4,
+          "mdd": -49.9
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 863.4,
+          "mdd": -56.1
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 395.1,
+          "mdd": -27.6
+        }
+      },
+      {
+        "start": "2020-01-16",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 384.5,
+          "mdd": -53.2
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 830.8,
+          "mdd": -56.4
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 379.1,
+          "mdd": -53.1
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 219.7,
+          "mdd": -49.8
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 369.1,
+          "mdd": -49.9
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 655.4,
+          "mdd": -56.3
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 359.9,
+          "mdd": -27.9
+        }
+      },
+      {
+        "start": "2020-04-16",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 506.5,
+          "mdd": -53.1
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 915.9,
+          "mdd": -53.1
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 322.7,
+          "mdd": -52.1
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 259.2,
+          "mdd": -49.4
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 469.4,
+          "mdd": -49.9
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 744.7,
+          "mdd": -42.1
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 355.7,
+          "mdd": -27.4
+        }
+      },
+      {
+        "start": "2020-07-16",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 124.5,
+          "mdd": -72.0
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 210.6,
+          "mdd": -76.0
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 94.9,
+          "mdd": -72.0
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 246.5,
+          "mdd": -49.5
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 384.3,
+          "mdd": -48.9
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 282.7,
+          "mdd": -63.3
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 349.0,
+          "mdd": -27.6
+        }
+      },
+      {
+        "start": "2020-10-15",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 66.2,
+          "mdd": -72.7
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 118.0,
+          "mdd": -75.5
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 25.1,
+          "mdd": -68.6
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 172.6,
+          "mdd": -50.4
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 246.9,
+          "mdd": -48.2
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 194.0,
+          "mdd": -62.5
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 292.1,
+          "mdd": -28.5
+        }
+      },
+      {
+        "start": "2021-01-14",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": -47.2,
+          "mdd": -76.7
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -24.9,
+          "mdd": -76.8
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": -48.0,
+          "mdd": -73.7
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": -25.6,
+          "mdd": -58.3
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 4.4,
+          "mdd": -50.5
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -10.7,
+          "mdd": -70.1
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": -15.5,
+          "mdd": -52.6
+        }
+      },
+      {
+        "start": "2021-04-15",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": -52.0,
+          "mdd": -76.7
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -40.7,
+          "mdd": -76.8
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": -36.3,
+          "mdd": -76.7
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": -31.5,
+          "mdd": -56.2
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": -10.7,
+          "mdd": -52.4
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -32.2,
+          "mdd": -75.8
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": -29.8,
+          "mdd": -55.7
+        }
+      },
+      {
+        "start": "2021-07-15",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": -8.5,
+          "mdd": -76.7
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -7.0,
+          "mdd": -76.8
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": -25.3,
+          "mdd": -72.2
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 12.4,
+          "mdd": -40.0
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 29.4,
+          "mdd": -41.9
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -3.4,
+          "mdd": -76.8
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": -14.5,
+          "mdd": -55.3
+        }
+      },
+      {
+        "start": "2021-10-14",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": -53.6,
+          "mdd": -76.7
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -54.8,
+          "mdd": -76.8
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": -53.4,
+          "mdd": -74.2
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": -16.3,
+          "mdd": -40.0
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": -18.1,
+          "mdd": -42.1
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -57.7,
+          "mdd": -76.8
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": -48.5,
+          "mdd": -55.7
+        }
+      },
+      {
+        "start": "2022-01-13",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": -3.5,
+          "mdd": -66.8
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -10.3,
+          "mdd": -67.0
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 5.6,
+          "mdd": -64.6
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 64.3,
+          "mdd": -18.6
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 54.8,
+          "mdd": -18.7
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -8.8,
+          "mdd": -67.0
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": -7.8,
+          "mdd": -39.2
+        }
+      },
+      {
+        "start": "2022-04-14",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 61.6,
+          "mdd": -62.0
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 44.0,
+          "mdd": -62.7
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 101.2,
+          "mdd": -52.8
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 144.7,
+          "mdd": -18.6
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 126.9,
+          "mdd": -18.7
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 49.5,
+          "mdd": -62.7
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 74.2,
+          "mdd": -29.0
+        }
+      },
+      {
+        "start": "2022-07-14",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 183.7,
+          "mdd": -35.6
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 182.2,
+          "mdd": -38.9
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 168.5,
+          "mdd": -30.5
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 105.7,
+          "mdd": -22.2
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 94.0,
+          "mdd": -23.5
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 162.7,
+          "mdd": -38.6
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 56.6,
+          "mdd": -29.0
+        }
+      },
+      {
+        "start": "2022-10-13",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 223.3,
+          "mdd": -26.2
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 182.3,
+          "mdd": -30.9
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 252.4,
+          "mdd": -26.2
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 80.9,
+          "mdd": -32.5
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 71.0,
+          "mdd": -33.2
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 178.7,
+          "mdd": -30.9
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 25.1,
+          "mdd": -35.9
+        }
+      },
+      {
+        "start": "2023-01-12",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 422.7,
+          "mdd": -26.2
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 335.8,
+          "mdd": -30.5
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 334.3,
+          "mdd": -26.2
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 116.8,
+          "mdd": -33.3
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 96.6,
+          "mdd": -33.8
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 263.8,
+          "mdd": -29.4
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 124.5,
+          "mdd": -31.0
+        }
+      },
+      {
+        "start": "2023-04-13",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 176.1,
+          "mdd": -28.2
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 117.5,
+          "mdd": -35.1
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 198.4,
+          "mdd": -28.2
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 38.6,
+          "mdd": -38.6
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 25.1,
+          "mdd": -38.7
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 105.1,
+          "mdd": -33.3
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 60.3,
+          "mdd": -38.0
+        }
+      },
+      {
+        "start": "2023-07-13",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 283.3,
+          "mdd": -28.2
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 215.3,
+          "mdd": -35.4
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 313.1,
+          "mdd": -28.2
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 63.2,
+          "mdd": -38.6
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 50.7,
+          "mdd": -38.3
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 200.7,
+          "mdd": -33.6
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 113.0,
+          "mdd": -34.5
+        }
+      },
+      {
+        "start": "2023-10-12",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 316.5,
+          "mdd": -28.2
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 264.3,
+          "mdd": -35.7
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 191.1,
+          "mdd": -26.4
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 85.8,
+          "mdd": -36.5
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 83.3,
+          "mdd": -36.3
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 257.0,
+          "mdd": -33.4
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 118.4,
+          "mdd": -31.8
+        }
+      },
+      {
+        "start": "2024-01-11",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 92.1,
+          "mdd": -32.1
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 69.9,
+          "mdd": -36.0
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 75.9,
+          "mdd": -29.3
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 24.8,
+          "mdd": -41.2
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 18.6,
+          "mdd": -40.6
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 97.6,
+          "mdd": -34.0
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 62.8,
+          "mdd": -37.7
+        }
+      },
+      {
+        "start": "2024-04-11",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 2.4,
+          "mdd": -49.7
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -9.5,
+          "mdd": -52.4
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 7.8,
+          "mdd": -48.2
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": -24.2,
+          "mdd": -43.0
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": -22.8,
+          "mdd": -41.4
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 2.3,
+          "mdd": -53.4
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": -2.0,
+          "mdd": -38.3
+        }
+      },
+      {
+        "start": "2024-07-11",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 10.1,
+          "mdd": -53.1
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": -5.7,
+          "mdd": -56.2
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 7.9,
+          "mdd": -53.1
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": -9.1,
+          "mdd": -33.8
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": -9.9,
+          "mdd": -30.8
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": -6.8,
+          "mdd": -56.9
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": -12.4,
+          "mdd": -38.6
+        }
+      },
+      {
+        "start": "2024-10-10",
+        "Buy & hold 100% BTC (benchmark)": {
+          "ret": 35.0,
+          "mdd": -53.1
+        },
+        "Buy & hold 70% BTC / 30% ETH": {
+          "ret": 25.7,
+          "mdd": -57.0
+        },
+        "Scheduled entry BTC (5 x CAD10, 14d apart)": {
+          "ret": 8.2,
+          "mdd": -52.0
+        },
+        "Trend filter BTC (200d SMA, weekly)": {
+          "ret": 23.3,
+          "mdd": -29.1
+        },
+        "Trend filter 70/30 BTC/ETH (200d SMA)": {
+          "ret": 18.2,
+          "mdd": -28.9
+        },
+        "Rebalance 70/30 (10pp band, weekly)": {
+          "ret": 40.5,
+          "mdd": -51.8
+        },
+        "[sensitivity] Trend filter BTC 100d SMA": {
+          "ret": 34.3,
+          "mdd": -30.5
+        }
+      }
+    ]
+  }
+]
