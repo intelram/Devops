@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">NetPilot</string>
+    <string name="disclaimer">Network failover and diagnostics. This app does NOT bond Wi-Fi and cellular bandwidth for the device. Steering applies only to this app\'s own traffic.</string>
+    <string name="keep_cell">Keep cellular up while on Wi-Fi (faster failover, uses battery/data)</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="diagnose">Diagnose</string>
+    <string name="panel">Open system Internet panel</string>
+    <string name="split_title">Split-download test (this app only; server must support HTTP Range)</string>
+    <string name="url_hint">https://… large file with Range support</string>
+    <string name="download">Download over all networks</string>
+    <string name="fgs_reason">Continuously monitors Wi-Fi and cellular networks and moves this app\'s own traffic to a working network on failure.</string>
+</resources>

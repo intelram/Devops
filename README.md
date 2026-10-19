@@ -35,3 +35,7 @@ python -m cryptobot approve                # explicit live-trading approval (aft
 | `scripts/export_dashboard.py` | Data files for the hosted dashboard (`data/dashboard/`) |
 
 Not financial advice. You can lose the entire amount.
+
+## Android: NetPilot (separate project)
+
+[`android/netpilot/`](android/netpilot/README.md) is a Wi-Fi/cellular failover and diagnostics app for non-rooted Android. It does no bandwidth bonding; [`docs/DESIGN.md`](android/netpilot/docs/DESIGN.md) explains why device-wide bonding isn't possible without a server.
