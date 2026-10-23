@@ -24,6 +24,7 @@ class NetPilotApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashLog.install(this) // first, so any later startup failure is captured
         ShieldVpnService.ensureChannels(this)
         controller.onWifiBroken = ::alertWifiBroken
     }

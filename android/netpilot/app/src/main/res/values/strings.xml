@@ -264,4 +264,10 @@
     <string name="alert_wifi_title">Wi-Fi isn\'t working</string>
     <string name="alert_wifi_text">%1$s Tap to check, or switch to mobile data.</string>
     <string name="tile_label">NetPilot</string>
+
+    <string name="crash_title">NetPilot closed unexpectedly</string>
+    <string name="crash_text">Sorry about that. The details below stay on this phone. Copy them and send them to the developer to help fix the problem.</string>
+    <string name="crash_copy">Copy details</string>
+    <string name="crash_dismiss">Close</string>
+    <string name="crash_copied">Copied</string>
 </resources>

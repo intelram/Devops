@@ -110,6 +110,7 @@ class MainActivity : Activity() {
         setupHome(); setupProtection(); setupNetwork(); setupSettings()
         selectTab(savedInstanceState?.getInt(STATE_TAB) ?: 0)
 
+        CrashLog.pending(this)?.let(::showCrashReport)
         if (!prefs.onboarded) startActivityForResult(Intent(this, OnboardingActivity::class.java), REQ_ONBOARD)
         else if (intent?.getBooleanExtra(EXTRA_CONNECT, false) == true) requestConnect()
     }
@@ -797,6 +798,23 @@ class MainActivity : Activity() {
             else -> v.background = null
         }
         return v
+    }
+
+    private fun showCrashReport(report: String) {
+        val text = TextView(this).apply {
+            this.text = report; setTextIsSelectable(true); textSize = 12f; typeface = android.graphics.Typeface.MONOSPACE
+            setPadding(dp(20), dp(8), dp(20), dp(8))
+        }
+        val scroll = android.widget.ScrollView(this).apply { addView(text) }
+        AlertDialog.Builder(this).setTitle(R.string.crash_title).setMessage(R.string.crash_text).setView(scroll)
+            .setPositiveButton(R.string.crash_copy) { _, _ ->
+                getSystemService(android.content.ClipboardManager::class.java)
+                    .setPrimaryClip(android.content.ClipData.newPlainText("NetPilot crash report", report))
+                CrashLog.clear(this)
+                toast(getString(R.string.crash_copied))
+            }
+            .setNegativeButton(R.string.crash_dismiss) { _, _ -> CrashLog.clear(this) }
+            .show()
     }
 
     private fun dialog(title: Int, msg: String) {
