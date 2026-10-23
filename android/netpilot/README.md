@@ -19,5 +19,9 @@ explains why. NetPilot does what Android allows:
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Min SDK 29 (Android 10). Permissions: `INTERNET`, `ACCESS_NETWORK_STATE`, `CHANGE_NETWORK_STATE`,
+No access to Google's repositories (e.g. a locked-down CI box)? `tools/build-apk-no-agp.sh` builds a debug APK from
+Maven Central and Ubuntu packages only (aapt, dx, zipalign, apksigner, Retrolambda), with pinned checksums. It
+produces `build/no-agp/out/netpilot-debug.apk`, signed with a throwaway debug key. The script header lists what it needs.
+
+Min SDK 29 (Android 10), target SDK 34. Permissions: `INTERNET`, `ACCESS_NETWORK_STATE`, `CHANGE_NETWORK_STATE`,
 `FOREGROUND_SERVICE(_SPECIAL_USE)`, `POST_NOTIFICATIONS`.

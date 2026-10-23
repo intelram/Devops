@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "dev.netpilot.app"
         minSdk = 29          // Settings.Panel, NetworkCapabilities.signalStrength
-        targetSdk = 35
+        targetSdk = 34       // 35 forces edge-to-edge on Android 15; the plain layout does not handle insets yet
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -44,15 +44,11 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        viewBinding = true
-    }
 }
 
+// Framework APIs only (minSdk 29 covers everything AndroidX was used for), so the only
+// third-party runtime dependency is kotlinx-coroutines from Maven Central.
 dependencies {
     implementation(project(":core"))
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.activity:activity-ktx:1.9.3")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 }

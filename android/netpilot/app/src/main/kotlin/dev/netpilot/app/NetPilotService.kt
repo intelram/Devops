@@ -8,10 +8,10 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
-import androidx.core.app.ServiceCompat
-import androidx.core.content.ContextCompat
 import dev.netpilot.core.Mode
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
  */
 class NetPilotService : Service() {
     private val scope = MainScope()
+    private var notifyJob: Job? = null
     private val controller get() = (application as NetPilotApp).controller
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -33,11 +34,16 @@ class NetPilotService : Service() {
             return START_NOT_STICKY
         }
         ensureChannel()
-        ServiceCompat.startForeground(this, NOTIF_ID, notification("Starting…"),
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        // The specialUse type exists from Android 14; earlier versions take no type for this service.
+        if (Build.VERSION.SDK_INT >= 34) {
+            startForeground(NOTIF_ID, notification("Starting…"), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        } else {
+            startForeground(NOTIF_ID, notification("Starting…"))
+        }
         val mode = intent?.getStringExtra(EXTRA_MODE)?.let(Mode::valueOf) ?: Mode.PREFER_WIFI
         controller.start(mode, intent?.getBooleanExtra(EXTRA_KEEP_CELL, true) ?: true)
-        scope.launch {
+        notifyJob?.cancel() // each Start tap re-enters here; keep a single updater
+        notifyJob = scope.launch {
             controller.state.collect { s ->
                 val bound = s.links.firstOrNull { it.id == s.boundId }?.transport?.name ?: "system default"
                 getSystemService(NotificationManager::class.java)
@@ -75,7 +81,7 @@ class NetPilotService : Service() {
         private const val EXTRA_MODE = "mode"
         private const val EXTRA_KEEP_CELL = "keepCell"
 
-        fun start(ctx: Context, mode: Mode, keepCellularUp: Boolean) = ContextCompat.startForegroundService(ctx,
+        fun start(ctx: Context, mode: Mode, keepCellularUp: Boolean) = ctx.startForegroundService(
             Intent(ctx, NetPilotService::class.java).putExtra(EXTRA_MODE, mode.name).putExtra(EXTRA_KEEP_CELL, keepCellularUp))
 
         fun stop(ctx: Context) {
