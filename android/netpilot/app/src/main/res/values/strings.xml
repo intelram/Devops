@@ -1,13 +1,267 @@
 <resources>
     <string name="app_name">NetPilot</string>
-    <string name="disclaimer">Network failover and diagnostics. This app does NOT bond Wi-Fi and cellular bandwidth for the device. Steering applies only to this app\'s own traffic.</string>
-    <string name="keep_cell">Keep cellular up while on Wi-Fi (faster failover, uses battery/data)</string>
-    <string name="start">Start</string>
-    <string name="stop">Stop</string>
-    <string name="diagnose">Diagnose</string>
-    <string name="panel">Open system Internet panel</string>
-    <string name="split_title">Split-download test (this app only; server must support HTTP Range)</string>
-    <string name="url_hint">https://… large file with Range support</string>
-    <string name="download">Download over all networks</string>
-    <string name="fgs_reason">Continuously monitors Wi-Fi and cellular networks and moves this app\'s own traffic to a working network on failure.</string>
+    <string name="wifi">Wi-Fi</string>
+    <string name="mobile_data">Mobile data</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_protection">Protection</string>
+    <string name="nav_network">Connection</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Connect button -->
+    <string name="btn_connect">Connect</string>
+    <string name="btn_connecting">Connecting…</string>
+    <string name="btn_connected">Protected</string>
+    <string name="btn_paused">Paused</string>
+    <string name="cd_connect">Turn protection on</string>
+    <string name="cd_connecting">Connecting, please wait</string>
+    <string name="cd_disconnect">Protection is on. Double-tap to turn it off</string>
+    <string name="cd_paused">Protection is paused. Double-tap to turn it off</string>
+
+    <!-- Home -->
+    <string name="home_subtitle">Ad blocking and a smarter connection, all on your phone.</string>
+    <string name="status_off_title">Protection is off</string>
+    <string name="status_off_detail">Tap Connect to block ads, trackers and harmful websites in all your apps.</string>
+    <string name="status_connecting_title">Turning on protection…</string>
+    <string name="status_on_title">You\'re protected</string>
+    <string name="status_on_detail">Ads, trackers and harmful sites are blocked in all apps. Your lookups are encrypted.</string>
+    <string name="status_on_detail_plain">Ads, trackers and harmful sites are blocked. Encrypted DNS isn\'t reachable on this network, so NetPilot is using the network\'s own DNS for now.</string>
+    <string name="status_paused_title">Protection is paused</string>
+    <string name="status_paused_detail">Everything is allowed for a few minutes. Protection turns back on at %1$s.</string>
+    <string name="resume_now">Turn back on now</string>
+    <string name="state_off_short">Off</string>
+    <string name="state_connecting_short">Connecting</string>
+    <string name="state_on_short">On</string>
+    <string name="state_paused_short">Paused</string>
+
+    <string name="net_working">Working</string>
+    <string name="net_no_internet">Connected, no internet</string>
+    <string name="net_sign_in">Needs sign-in</string>
+    <string name="net_off">Not connected</string>
+    <string name="net_checking">Checking…</string>
+    <string name="quality_excellent">Excellent</string>
+    <string name="quality_good">Good</string>
+    <string name="quality_fair">Fair</string>
+    <string name="quality_poor">Slow</string>
+    <string name="quality_not_working">Not working</string>
+    <string name="net_status_line">%1$s · %2$s</string>
+
+    <string name="using_wifi">Your phone is using Wi-Fi</string>
+    <string name="using_mobile">Your phone is using mobile data</string>
+    <string name="using_none">Your phone is offline</string>
+    <string name="using_other">Your phone is using another connection</string>
+    <string name="using_detail_backup">Mobile data is ready as a backup. NetPilot checks both and alerts you if Wi-Fi stops working.</string>
+    <string name="using_detail_single">NetPilot checks your connection regularly and tells you if it stops working.</string>
+    <string name="using_detail_monitor_off">Turn on protection, or keep this screen open, to check your connection.</string>
+    <string name="cd_info">More information</string>
+    <string name="bonding_title">Is my connection combined?</string>
+    <string name="bonding_text">No. NetPilot doesn\'t merge Wi-Fi and mobile data into one faster connection. That needs a special server in the middle (like Speedify uses), and it costs data and money.\n\nWhat NetPilot does instead:\n• Watches both connections all the time\n• Tells you straight away when Wi-Fi is "connected" but not working\n• Shows which connection your phone is using\n• Keeps mobile data ready, if you choose, so the phone can switch faster\n\nAndroid itself decides which connection your apps use.</string>
+
+    <string name="speed_title">Right now</string>
+    <string name="speed_down">Download</string>
+    <string name="speed_up">Upload</string>
+    <string name="speed_response">Response</string>
+    <string name="speed_note">Live speed of all apps on this phone, not a speed test.</string>
+    <string name="speed_unknown">—</string>
+
+    <string name="blocked_title">Blocked today</string>
+    <string name="blocked_label">ads, trackers and harmful sites</string>
+    <string name="blocked_detail">%1$s lookups checked today · %2$s blocked since you started</string>
+    <string name="blocked_info_title">What do these numbers mean?</string>
+    <string name="blocked_info_text">Every app looks up website names before connecting (for example "ads.example.com"). NetPilot counts these lookups.\n\n"Blocked" is the number of lookups NetPilot stopped. One blocked lookup can mean zero ads, or many ads, so this isn\'t an exact ad count.\n\nSome ads come from the same address as the video or page itself (YouTube is a common example). No DNS blocker can remove those without breaking the content.</string>
+
+    <string name="usage_title">Data and battery</string>
+    <string name="usage_mobile">Mobile data since phone restart: %1$s</string>
+    <string name="usage_wifi">Wi-Fi and other since restart: %1$s</string>
+    <string name="usage_unavailable">Data use isn\'t available on this phone.</string>
+    <string name="battery_ok">Battery: NetPilot may run in the background ✓</string>
+    <string name="battery_restricted">Battery: Android may stop NetPilot in the background</string>
+    <string name="battery_fix">Fix battery setting</string>
+    <string name="battery_explain">NetPilot only handles website-name lookups, so its battery use is small. Android shows all VPN traffic under NetPilot, which can make the battery screen look higher than it really is.</string>
+
+    <string name="problems_title">Needs attention</string>
+    <string name="history_title">Connection history</string>
+    <string name="history_empty">Nothing has changed yet. NetPilot notes when Wi-Fi or mobile data stops or starts working.</string>
+    <string name="history_more">Show more</string>
+    <string name="history_less">Show less</string>
+    <string name="hist_disconnected">%1$s disconnected</string>
+    <string name="hist_connected">%1$s connected</string>
+    <string name="hist_no_internet">%1$s is connected but has no internet</string>
+    <string name="hist_working_again">%1$s is working again</string>
+    <string name="hist_now_using">Phone switched to %1$s</string>
+
+    <string name="fix_open">Fix it</string>
+
+    <!-- Protection -->
+    <string name="protection_title">Protection</string>
+    <string name="protection_subtitle">Choose what to block. Lists update themselves every day.</string>
+    <string name="lists_title">Block lists</string>
+    <string name="list_ads">Block ads and trackers</string>
+    <string name="list_ads_detail">Recommended. Blocks advertising and tracking in apps and websites.</string>
+    <string name="list_harmful">Block harmful sites</string>
+    <string name="list_harmful_detail">Recommended. Blocks known scam, phishing and malware sites.</string>
+    <string name="list_strict">Stricter blocking</string>
+    <string name="list_strict_detail">Blocks more trackers. A few apps or sites may stop working properly.</string>
+    <string name="list_seed">Ads and trackers (starter list)</string>
+    <string name="list_status_ready">%1$s sites · updated %2$s</string>
+    <string name="list_status_waiting">Will download when protection is on</string>
+    <string name="list_status_error">Update failed, using the previous list. %1$s</string>
+    <string name="update_lists">Update lists now</string>
+    <string name="updating_lists">Updating lists…</string>
+    <string name="lists_updated">Lists are up to date</string>
+    <string name="lists_update_failed">Some lists couldn\'t be updated. Check your connection and try again.</string>
+
+    <string name="broken_title">Is a website or app not working?</string>
+    <string name="broken_text">Blocking can sometimes stop a page or app from loading. Pause protection to check, then allow the website or skip the app.</string>
+    <string name="pause_button">Pause for 5 minutes</string>
+    <string name="allow_site_button">Allow a website</string>
+    <string name="block_site_button">Block a website</string>
+    <string name="apps_title">Apps that skip protection</string>
+    <string name="apps_none">All apps are protected.</string>
+    <string name="apps_some">%1$d apps skip protection.</string>
+    <string name="choose_apps">Choose apps</string>
+    <string name="allowed_title">Websites you allowed</string>
+    <string name="allowed_empty">None. Allowed websites are never blocked.</string>
+    <string name="blocked_sites_title">Websites you blocked</string>
+    <string name="blocked_sites_empty">None. You can block any website, even if no list includes it.</string>
+    <string name="remove">Remove</string>
+    <string name="cd_remove">Remove %1$s</string>
+    <string name="activity_title">Recent activity</string>
+    <string name="activity_only_blocked">Only show blocked</string>
+    <string name="activity_keep">Keep a list of recent activity</string>
+    <string name="activity_keep_note">Stays on this phone and is cleared when NetPilot closes.</string>
+    <string name="activity_empty">No activity yet. Turn on protection and use your apps.</string>
+    <string name="activity_blocked_by">Blocked · %1$s</string>
+    <string name="activity_allowed">Allowed</string>
+    <string name="activity_allowed_by_you">Allowed by you</string>
+    <string name="activity_blocked_by_you">your block list</string>
+    <string name="clear_activity">Clear list</string>
+    <string name="top_title">Most blocked today</string>
+    <string name="top_row">%1$s × %2$s</string>
+    <string name="dialog_allow_title">Allow %1$s?</string>
+    <string name="dialog_allow_text">This website will never be blocked. Use this if something stopped working.</string>
+    <string name="dialog_block_title">Block %1$s?</string>
+    <string name="dialog_block_text">This website and everything under it will be blocked in all apps.</string>
+    <string name="allow">Allow</string>
+    <string name="block">Block</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="dialog_site_hint">example.com</string>
+    <string name="dialog_site_allow_title">Allow a website</string>
+    <string name="dialog_site_block_title">Block a website</string>
+    <string name="invalid_site">That doesn\'t look like a website name. Try something like example.com.</string>
+
+    <!-- App picker -->
+    <string name="apps_screen_title">Apps that skip protection</string>
+    <string name="apps_screen_text">Selected apps connect without NetPilot. Use this for an app that misbehaves while protection is on.</string>
+    <string name="apps_search">Search apps</string>
+    <string name="apps_loading">Loading apps…</string>
+    <string name="save">Save</string>
+    <string name="app_skips">Skips protection</string>
+    <string name="app_protected">Protected</string>
+
+    <!-- Connection tab -->
+    <string name="network_title">Connection</string>
+    <string name="network_subtitle">NetPilot watches Wi-Fi and mobile data and tells you when one stops working. It doesn\'t combine them into one faster connection.</string>
+    <string name="network_card_detail">Response time %1$s · Signal %2$s</string>
+    <string name="signal_strong">strong</string>
+    <string name="signal_ok">okay</string>
+    <string name="signal_weak">weak</string>
+    <string name="signal_unknown">not reported</string>
+    <string name="check_now">Check my connection</string>
+    <string name="checking">Checking…</string>
+    <string name="check_all_good">Everything looks good.</string>
+    <string name="alerts_switch">Tell me when Wi-Fi stops working</string>
+    <string name="keep_cell_switch">Keep mobile data ready as a backup</string>
+    <string name="keep_cell_note">Lets your phone switch faster when Wi-Fi fails. Uses a little more battery.</string>
+    <string name="internet_panel">Open the phone\'s internet settings</string>
+    <string name="advanced_show">Show advanced options</string>
+    <string name="advanced_hide">Hide advanced options</string>
+    <string name="advanced_mode_title">Which connection NetPilot itself uses</string>
+    <string name="advanced_mode_note">This only affects NetPilot\'s own traffic (encrypted DNS and list downloads). Android chooses the connection for your other apps.</string>
+    <string name="mode_auto">Automatic (best connection)</string>
+    <string name="mode_prefer_wifi">Prefer Wi-Fi</string>
+    <string name="mode_prefer_cell">Prefer mobile data</string>
+    <string name="mode_wifi_only">Wi-Fi only</string>
+    <string name="mode_cell_only">Mobile data only</string>
+    <string name="tech_title">Technical details</string>
+    <string name="split_title">Download test over both connections</string>
+    <string name="split_note">Downloads one file over Wi-Fi and mobile data at the same time. Works only inside NetPilot, and only with servers that support partial downloads. Uses mobile data.</string>
+    <string name="url_hint">https://… large file</string>
+    <string name="download">Start download test</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="dns_title">Encrypted DNS</string>
+    <string name="dns_text">Website-name lookups are sent encrypted, so your network can\'t read or change them.</string>
+    <string name="dns_cloudflare">Cloudflare</string>
+    <string name="dns_cloudflare_detail">Fast and private. Recommended.</string>
+    <string name="dns_quad9">Quad9</string>
+    <string name="dns_quad9_detail">Non-profit. Also blocks known malware sites.</string>
+    <string name="dns_google">Google</string>
+    <string name="dns_google_detail">Fast and widely available.</string>
+    <string name="dns_mullvad">Mullvad</string>
+    <string name="dns_mullvad_detail">No logging, privacy-focused.</string>
+    <string name="dns_custom">Custom</string>
+    <string name="dns_custom_detail">Your own DNS-over-HTTPS address.</string>
+    <string name="dns_custom_hint">https://dns.example/dns-query</string>
+    <string name="dns_custom_invalid">Enter an address that starts with https://</string>
+    <string name="plain_fallback">Use the network\'s DNS if encrypted DNS fails</string>
+    <string name="plain_fallback_note">Recommended. Keeps hotel and café Wi-Fi sign-in pages working. Blocking still works either way.</string>
+    <string name="dns_status_ok">Encrypted DNS is working ✓</string>
+    <string name="dns_status_plain">Encrypted DNS isn\'t reachable right now. Using the network\'s DNS.</string>
+    <string name="always_on_title">Always on</string>
+    <string name="always_on_text">Android can start NetPilot when your phone turns on and keep it running. In the next screen, tap the gear next to NetPilot and turn on "Always-on VPN".</string>
+    <string name="always_on_button">Open VPN settings</string>
+    <string name="always_on_active">Always-on is managed by Android. To turn protection off, use the phone\'s VPN settings.</string>
+    <string name="battery_title">Run in the background</string>
+    <string name="battery_text">Some phones close apps to save battery. Allow NetPilot to run so protection doesn\'t stop.</string>
+    <string name="battery_button">Open battery settings</string>
+    <string name="hardcoded_switch">Also filter apps that use their own DNS</string>
+    <string name="hardcoded_note">Catches apps that skip the phone\'s DNS. Rarely, an app may take a few seconds longer to connect.</string>
+    <string name="privacy_title">Your privacy</string>
+    <string name="privacy_text">NetPilot works entirely on your phone. No account, no ads, no analytics, no crash reports. Your activity list never leaves the phone. Lookups go encrypted to the DNS provider you chose above. Block lists are downloaded from public sources.</string>
+    <string name="clear_stats">Clear statistics and activity</string>
+    <string name="cleared">Cleared</string>
+    <string name="help_title">Help</string>
+    <string name="show_intro">Show the introduction again</string>
+    <string name="troubleshoot">Troubleshooting tips</string>
+    <string name="troubleshoot_text">• A website or app won\'t load: pause protection for 5 minutes. If it works then, allow that website, or let the app skip protection.\n\n• Protection keeps turning off: allow NetPilot to run in the background (Settings tab), and turn on Always on.\n\n• "Another VPN is on": Android allows only one VPN at a time. Turn the other one off.\n\n• Wi-Fi says connected but nothing loads: check the Connection tab. NetPilot shows what\'s wrong and how to fix it.\n\n• Ads still show in some apps: some ads come from the same address as the content. DNS blocking can\'t remove those.\n\n• Blocking seems to do nothing: set Private DNS to Automatic, and turn off "Use secure DNS" with a custom provider in your browser. Both send lookups around NetPilot.</string>
+    <string name="about_title">About</string>
+    <string name="about_text">NetPilot %1$s. Block lists by: %2$s. Lists are downloaded at runtime under their own licences.</string>
+
+    <!-- Onboarding -->
+    <string name="ob1_title">Block ads and trackers</string>
+    <string name="ob1_text">NetPilot blocks ads, trackers and harmful websites in all your apps, right on your phone. No account, no subscription.</string>
+    <string name="ob2_title">Know when your connection fails</string>
+    <string name="ob2_text">NetPilot watches Wi-Fi and mobile data and tells you when Wi-Fi is "connected" but not working.\n\nIt doesn\'t combine them into one faster connection. That needs a paid server.</string>
+    <string name="ob3_title">Two quick permissions</string>
+    <string name="ob3_text">Android will ask to let NetPilot set up a VPN. NetPilot uses it only to check website names on your phone; your browsing isn\'t sent to any NetPilot server.\n\nNotifications let NetPilot tell you about connection problems.</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="skip">Skip</string>
+    <string name="get_started">Turn on protection</string>
+    <string name="not_now">Not now</string>
+    <string name="cd_page">Page %1$d of %2$d</string>
+
+    <string name="vpn_denied_title">Protection needs VPN permission</string>
+    <string name="vpn_denied_text">Android uses the VPN permission for any app that filters connections. NetPilot keeps everything on your phone. Tap Connect to try again.</string>
+    <string name="other_vpn_title">Another VPN is active</string>
+    <string name="other_vpn_text">Android allows one VPN at a time. Turning on NetPilot will turn the other VPN off.</string>
+
+    <!-- Notifications and tile -->
+    <string name="channel_protection">Protection status</string>
+    <string name="channel_alerts">Connection alerts</string>
+    <string name="notif_on_title">You\'re protected</string>
+    <string name="notif_on_text">%1$s blocked today</string>
+    <string name="notif_paused_title">Protection paused</string>
+    <string name="notif_paused_text">Back on in %1$d minutes</string>
+    <string name="action_pause">Pause 5 min</string>
+    <string name="action_disconnect">Turn off</string>
+    <string name="alert_revoked_title">Protection turned off</string>
+    <string name="alert_revoked_text">Another VPN app started, or the VPN was turned off in Settings. Open NetPilot to turn protection back on.</string>
+    <string name="alert_wifi_title">Wi-Fi isn\'t working</string>
+    <string name="alert_wifi_text">%1$s Tap to check, or switch to mobile data.</string>
+    <string name="tile_label">NetPilot</string>
 </resources>

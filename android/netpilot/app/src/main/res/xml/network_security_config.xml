@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Cleartext is denied everywhere except the captive-portal probe host, which must be plain HTTP to detect interception. -->
 <network-security-config>
-    <base-config cleartextTrafficPermitted="false" />
+    <!-- Only system CAs: a user-installed certificate can never intercept NetPilot's encrypted DNS or list downloads. -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">connectivitycheck.gstatic.com</domain>
     </domain-config>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:animateLayoutChanges="true">
+        <TextView style="@style/Text.Title" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/protection_title" android:accessibilityHeading="true" />
+        <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/protection_subtitle" />
+
+        <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/lists_title" />
+            <LinearLayout android:id="@+id/lists_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+            <Button android:id="@+id/update_lists" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/update_lists" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/broken_title" />
+            <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/broken_text" />
+            <Button android:id="@+id/pause_button" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/pause_button" />
+            <Button android:id="@+id/allow_site_button" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/allow_site_button" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/apps_title" />
+            <TextView android:id="@+id/apps_summary" style="@style/Text.Body" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="4dp" />
+            <Button android:id="@+id/choose_apps" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/choose_apps" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/allowed_title" />
+            <LinearLayout android:id="@+id/allowed_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/blocked_sites_title" />
+            <LinearLayout android:id="@+id/blocked_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+            <Button android:id="@+id/block_site_button" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/block_site_button" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/top_title" />
+            <LinearLayout android:id="@+id/top_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card" android:layout_marginBottom="16dp">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/activity_title" />
+            <Switch android:id="@+id/activity_only_blocked" style="@style/SwitchRow" android:text="@string/activity_only_blocked" />
+            <LinearLayout android:id="@+id/activity_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+            <Switch android:id="@+id/activity_keep" style="@style/SwitchRow" android:text="@string/activity_keep" />
+            <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/activity_keep_note" />
+            <Button android:id="@+id/clear_activity" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/clear_activity" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

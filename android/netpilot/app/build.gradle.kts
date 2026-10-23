@@ -10,9 +10,9 @@ android {
     defaultConfig {
         applicationId = "dev.netpilot.app"
         minSdk = 29          // Settings.Panel, NetworkCapabilities.signalStrength
-        targetSdk = 34       // 35 forces edge-to-edge on Android 15; the plain layout does not handle insets yet
-        versionCode = 1
-        versionName = "0.1.0"
+        targetSdk = 35       // screens apply window insets themselves (edge-to-edge)
+        versionCode = 2
+        versionName = "0.2.0"
     }
 
     // Release signing reads keystore.properties (git-ignored). See docs/DESIGN.md §5.

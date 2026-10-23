@@ -1,32 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="16dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/background">
 
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/disclaimer" android:textStyle="bold" android:paddingBottom="8dp" />
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <include android:id="@+id/tab_home" layout="@layout/tab_home" />
+        <include android:id="@+id/tab_protection" layout="@layout/tab_protection" android:visibility="gone" />
+        <include android:id="@+id/tab_network" layout="@layout/tab_network" android:visibility="gone" />
+        <include android:id="@+id/tab_settings" layout="@layout/tab_settings" android:visibility="gone" />
+    </FrameLayout>
 
-        <Spinner android:id="@+id/mode" android:layout_width="match_parent" android:layout_height="wrap_content" />
-        <Switch android:id="@+id/keepCell" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:checked="true" android:text="@string/keep_cell" />
-
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-            <Button android:id="@+id/start" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/start" />
-            <Button android:id="@+id/stop" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/stop" />
-            <Button android:id="@+id/diagnose" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/diagnose" />
-        </LinearLayout>
-        <Button android:id="@+id/panel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/panel" />
-
-        <TextView android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:fontFamily="monospace" android:textSize="12sp" android:textIsSelectable="true" android:paddingVertical="8dp" />
-
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="@string/split_title" android:textStyle="bold" android:paddingTop="16dp" />
-        <EditText android:id="@+id/url" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:hint="@string/url_hint" android:inputType="textUri" android:autofillHints="" />
-        <Button android:id="@+id/download" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/download" />
-        <TextView android:id="@+id/dlStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:fontFamily="monospace" android:textSize="12sp" />
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+    <LinearLayout android:id="@+id/nav" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:background="@drawable/nav_bg" android:paddingTop="6dp" android:paddingBottom="6dp">
+        <include android:id="@+id/nav_home" layout="@layout/nav_item" />
+        <include android:id="@+id/nav_protection" layout="@layout/nav_item" />
+        <include android:id="@+id/nav_network" layout="@layout/nav_item" />
+        <include android:id="@+id/nav_settings" layout="@layout/nav_item" />
     </LinearLayout>
-</ScrollView>
+</LinearLayout>

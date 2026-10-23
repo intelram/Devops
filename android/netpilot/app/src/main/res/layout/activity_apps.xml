@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@color/background" android:padding="16dp">
+    <TextView style="@style/Text.Title" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/apps_screen_title" android:accessibilityHeading="true" />
+    <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/apps_screen_text" />
+    <EditText android:id="@+id/search" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:minHeight="48dp" android:hint="@string/apps_search" android:inputType="text" android:importantForAutofill="no"
+        android:layout_marginTop="8dp" />
+    <ListView android:id="@+id/list" android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:divider="@color/divider" android:dividerHeight="1dp" />
+    <TextView android:id="@+id/empty" style="@style/Text.Secondary" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="@string/apps_loading" android:gravity="center" />
+    <Button android:id="@+id/save" style="@style/Button.Filled" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:text="@string/save" />
+</LinearLayout>

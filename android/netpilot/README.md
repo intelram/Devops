@@ -1,4 +1,6 @@
-# NetPilot: Wi-Fi/cellular failover and diagnostics for Android (no server)
+# NetPilot: ad and tracker blocking plus Wi-Fi/mobile-data monitoring for Android (no server)
+
+**What's new in 0.2:** [`docs/V0.2_PROTECTION_AND_UI.md`](docs/V0.2_PROTECTION_AND_UI.md) covers the on-phone protection VPN, the simplified four-tab interface, and what is and isn't verified.
 
 **Read [`docs/DESIGN.md`](docs/DESIGN.md) first.** It covers the feasibility analysis, architecture, plan, build and
 signing, delivery limits, the test matrix and the acceptance criteria.
@@ -23,5 +25,5 @@ No access to Google's repositories (e.g. a locked-down CI box)? `tools/build-apk
 Maven Central and Ubuntu packages only (aapt, dx, zipalign, apksigner, Retrolambda), with pinned checksums. It
 produces `build/no-agp/out/netpilot-debug.apk`, signed with a throwaway debug key. The script header lists what it needs.
 
-Min SDK 29 (Android 10), target SDK 34. Permissions: `INTERNET`, `ACCESS_NETWORK_STATE`, `CHANGE_NETWORK_STATE`,
-`FOREGROUND_SERVICE(_SPECIAL_USE)`, `POST_NOTIFICATIONS`.
+Min SDK 29 (Android 10), target SDK 35. Permissions: `INTERNET`, `ACCESS_NETWORK_STATE`, `CHANGE_NETWORK_STATE`,
+`FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_SYSTEM_EXEMPTED` (VPN), `POST_NOTIFICATIONS`.

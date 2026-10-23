@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Text/background pairs meet WCAG AA (4.5:1) for body text. -->
+<resources>
+    <color name="primary">#1557B0</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="background">#F3F5F9</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_raised">#FFFFFF</color>
+    <color name="surface_tint">#E8EEF8</color>
+    <color name="text_primary">#111827</color>
+    <color name="text_secondary">#4B5563</color>
+    <color name="outline">#6B7280</color>
+    <color name="divider">#E2E6EC</color>
+    <color name="good">#1B7F3B</color>
+    <color name="on_good">#FFFFFF</color>
+    <color name="good_tint">#E3F4E8</color>
+    <color name="warn">#A84F06</color>
+    <color name="warn_tint">#FDF0E1</color>
+    <color name="bad">#B42318</color>
+    <color name="bad_tint">#FCE8E6</color>
+    <color name="launcher_bg">#1557B0</color>
+</resources>

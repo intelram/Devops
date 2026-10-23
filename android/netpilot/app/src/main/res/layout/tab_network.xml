@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:animateLayoutChanges="true">
+        <TextView style="@style/Text.Title" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/network_title" android:accessibilityHeading="true" />
+        <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/network_subtitle" />
+
+        <LinearLayout style="@style/Card">
+            <LinearLayout android:id="@+id/networks_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+            <Button android:id="@+id/check_now" style="@style/Button.Filled" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/check_now" />
+            <TextView android:id="@+id/check_result" style="@style/Text.Body" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="8dp" android:accessibilityLiveRegion="polite" />
+            <LinearLayout android:id="@+id/findings_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
+            <Switch android:id="@+id/alerts_switch" style="@style/SwitchRow" android:text="@string/alerts_switch" />
+            <Switch android:id="@+id/keep_cell_switch" style="@style/SwitchRow" android:text="@string/keep_cell_switch" />
+            <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/keep_cell_note" />
+            <Button android:id="@+id/internet_panel" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="@string/internet_panel" />
+        </LinearLayout>
+
+        <Button android:id="@+id/advanced_toggle" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:text="@string/advanced_show" />
+        <LinearLayout android:id="@+id/advanced_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+            <LinearLayout style="@style/Card">
+                <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/advanced_mode_title" />
+                <Spinner android:id="@+id/mode_spinner" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:minHeight="48dp" android:layout_marginTop="4dp" />
+                <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/advanced_mode_note" />
+            </LinearLayout>
+            <LinearLayout style="@style/Card">
+                <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/split_title" />
+                <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/split_note" />
+                <EditText android:id="@+id/url" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:minHeight="48dp" android:hint="@string/url_hint" android:inputType="textUri" android:importantForAutofill="no" />
+                <Button android:id="@+id/download" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/download" />
+                <TextView android:id="@+id/dl_status" style="@style/Text.Secondary" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:textIsSelectable="true" />
+            </LinearLayout>
+            <LinearLayout style="@style/Card" android:layout_marginBottom="16dp">
+                <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/tech_title" />
+                <TextView android:id="@+id/tech_details" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:fontFamily="monospace" android:textSize="12sp" android:textColor="@color/text_secondary"
+                    android:textIsSelectable="true" android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

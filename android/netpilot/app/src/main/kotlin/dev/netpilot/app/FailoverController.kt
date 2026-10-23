@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.os.Process
 import android.provider.Settings
 import android.util.Log
 import dev.netpilot.core.Decision
@@ -14,6 +15,7 @@ import dev.netpilot.core.Finding
 import dev.netpilot.core.LinkSnapshot
 import dev.netpilot.core.Mode
 import dev.netpilot.core.ProbeResult
+import dev.netpilot.core.Transport
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -41,7 +43,11 @@ data class UiState(
     val lastDecision: Decision? = null,
     val findings: List<Finding> = emptyList(),
     val events: List<String> = emptyList(),
+    /** Plain-language connection history for the Home screen, newest first. */
+    val history: List<HistoryItem> = emptyList(),
 )
+
+data class HistoryItem(val time: Long, val text: String)
 
 /**
  * Runs the monitor -> probe -> policy -> bind loop. Evaluates on a timer and
@@ -70,6 +76,13 @@ class FailoverController(context: Context, private val scope: CoroutineScope) {
     /** Re-probe interval while the bound link is failing, so failover doesn't wait a full interval. */
     var degradedIntervalMs = 3_000L
     @Volatile private var boundDegraded = false
+    private var lastStatus: Map<Transport, LinkHealth> = emptyMap()
+    private var lastDefault: Transport? = null
+
+    private enum class LinkHealth { WORKING, NO_INTERNET }
+
+    /** Called (on the main thread) when Wi-Fi is connected but stops reaching the internet. */
+    var onWifiBroken: (() -> Unit)? = null
 
     fun start(mode: Mode, keepCellularUp: Boolean) {
         if (_state.value.running) return
@@ -135,6 +148,8 @@ class FailoverController(context: Context, private val scope: CoroutineScope) {
             is Decision.Stay -> Unit
         }
 
+        recordHistory(snaps, monitor.systemDefault.value?.let { os[it] }?.caps?.transport())
+
         _state.value = _state.value.copy(
             links = snaps,
             boundId = selector.bound?.toString(),
@@ -144,8 +159,46 @@ class FailoverController(context: Context, private val scope: CoroutineScope) {
         )
     }
 
+    /** Turns state changes into sentences: "Wi-Fi stopped working", "Phone switched to mobile data". */
+    private fun recordHistory(snaps: List<LinkSnapshot>, defaultTransport: Transport?) {
+        val now = HashMap<Transport, LinkHealth>()
+        for (l in snaps) if (l.transport == Transport.WIFI || l.transport == Transport.CELLULAR) {
+            // Only judge links we have probed; before that, trust Android's own check.
+            val ok = l.probe?.reachable ?: l.validated
+            now[l.transport] = if (ok && !l.captivePortal) LinkHealth.WORKING else LinkHealth.NO_INTERNET
+        }
+        val items = ArrayList<String>()
+        if (lastStatus.isNotEmpty() || lastDefault != null) {
+            for (t in listOf(Transport.WIFI, Transport.CELLULAR)) {
+                val name = app.getString(if (t == Transport.WIFI) R.string.wifi else R.string.mobile_data)
+                val before = lastStatus[t]; val after = now[t]
+                if (before == after) continue
+                items += when {
+                    after == null -> app.getString(R.string.hist_disconnected, name)
+                    before == null && after == LinkHealth.WORKING -> app.getString(R.string.hist_connected, name)
+                    after == LinkHealth.NO_INTERNET -> {
+                        if (t == Transport.WIFI) onWifiBroken?.invoke()
+                        app.getString(R.string.hist_no_internet, name)
+                    }
+                    else -> app.getString(R.string.hist_working_again, name)
+                }
+            }
+            if (defaultTransport != null && defaultTransport != lastDefault &&
+                (defaultTransport == Transport.WIFI || defaultTransport == Transport.CELLULAR)) {
+                items += app.getString(R.string.hist_now_using,
+                    app.getString(if (defaultTransport == Transport.WIFI) R.string.wifi else R.string.mobile_data))
+            }
+        }
+        lastStatus = now
+        if (defaultTransport != null) lastDefault = defaultTransport
+        if (items.isEmpty()) return
+        val t = System.currentTimeMillis()
+        _state.value = _state.value.copy(history = (items.map { HistoryItem(t, it) } + _state.value.history).take(100))
+    }
+
     private fun deviceState(links: Collection<OsLink>) = DeviceState(
-        anyVpnActive = links.any { it.caps?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) == true },
+        // Our own VPN reports our UID as owner; other apps' VPNs hide it (INVALID_UID).
+        anyVpnActive = links.any { it.caps?.let { c -> c.hasTransport(NetworkCapabilities.TRANSPORT_VPN) && c.ownerUid != Process.myUid() } == true },
         dataSaverOn = cm.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED,
         backgroundRestricted = app.getSystemService(android.app.ActivityManager::class.java).isBackgroundRestricted,
         airplaneMode = Settings.Global.getInt(app.contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) == 1,
