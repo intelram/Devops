@@ -193,7 +193,7 @@
 
     <!-- Connection tab -->
     <string name="network_title">Connection</string>
-    <string name="network_subtitle">NetPilot watches Wi-Fi and mobile data and tells you when one stops working. It doesn\'t combine them into one faster connection.</string>
+    <string name="network_subtitle">NetPilot watches Wi-Fi and mobile data and tells you when one stops working. Fast download uses both at once for a file.</string>
     <string name="network_card_detail">Response time %1$s · Signal %2$s</string>
     <string name="signal_strong">strong</string>
     <string name="signal_ok">okay</string>
@@ -262,7 +262,7 @@
     <string name="ob1_title">Block ads and trackers</string>
     <string name="ob1_text">NetPilot blocks ads, trackers and harmful websites in all your apps, right on your phone. No account, no subscription.</string>
     <string name="ob2_title">Know when your connection fails</string>
-    <string name="ob2_text">NetPilot watches Wi-Fi and mobile data and tells you when Wi-Fi is "connected" but not working.\n\nIt doesn\'t combine them into one faster connection. That needs a paid server.</string>
+    <string name="ob2_text">NetPilot watches Wi-Fi and mobile data and tells you when Wi-Fi is "connected" but not working.\n\nIf you want, it can also use both at once: for downloads in NetPilot, and (experimental) by sharing your apps\' connections between them. One single connection, like one video, still uses one network.</string>
     <string name="ob3_title">Two quick permissions</string>
     <string name="ob3_text">Android will ask to let NetPilot set up a VPN. NetPilot uses it only to check website names on your phone; your browsing isn\'t sent to any NetPilot server.\n\nNotifications let NetPilot tell you about connection problems.</string>
     <string name="next">Next</string>
