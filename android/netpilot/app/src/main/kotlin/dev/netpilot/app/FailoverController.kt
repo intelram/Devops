@@ -82,6 +82,13 @@ class FailoverController(context: Context, private val scope: CoroutineScope) {
 
     private enum class LinkHealth { WORKING, NO_INTERNET }
 
+    /** Called with the full history after each change, so the app can keep it across restarts. */
+    var onHistoryChanged: ((List<HistoryItem>) -> Unit)? = null
+
+    fun restoreHistory(items: List<HistoryItem>) {
+        if (_state.value.history.isEmpty()) _state.value = _state.value.copy(history = items)
+    }
+
     /** Called (on the main thread) when Wi-Fi is connected but stops reaching the internet. */
     var onWifiBroken: (() -> Unit)? = null
 
@@ -195,6 +202,7 @@ class FailoverController(context: Context, private val scope: CoroutineScope) {
         if (items.isEmpty()) return
         val t = System.currentTimeMillis()
         _state.value = _state.value.copy(history = (items.map { HistoryItem(t, it) } + _state.value.history).take(100))
+        onHistoryChanged?.invoke(_state.value.history)
     }
 
     /**

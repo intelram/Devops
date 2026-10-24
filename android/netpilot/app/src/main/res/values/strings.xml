@@ -53,6 +53,7 @@
     <string name="using_mobile">Your phone is using mobile data</string>
     <string name="using_none">Your phone is offline</string>
     <string name="using_other">Your phone is using another connection</string>
+    <string name="using_wired">Your phone is using a wired connection</string>
     <string name="using_detail_backup">Mobile data is ready as a backup. NetPilot checks both and alerts you if Wi-Fi stops working.</string>
     <string name="using_detail_single">NetPilot checks your connection regularly and tells you if it stops working.</string>
     <string name="using_detail_monitor_off">Turn on protection, or keep this screen open, to check your connection.</string>
@@ -74,6 +75,13 @@
     <string name="blocked_info_text">Every app looks up website names before connecting (for example "ads.example.com"). NetPilot counts these lookups.\n\n"Blocked" is the number of lookups NetPilot stopped. One blocked lookup can mean zero ads, or many ads, so this isn\'t an exact ad count.\n\nSome ads come from the same address as the video or page itself (YouTube is a common example). No DNS blocker can remove those without breaking the content.</string>
 
     <string name="usage_title">Data and battery</string>
+    <string name="usage_today">Mobile data today: about %1$s</string>
+    <string name="home_block_title">What to block</string>
+    <string name="home_block_note_on">Changes apply straight away. More options are on the Protection tab.</string>
+    <string name="home_block_note_off">These apply when protection is on. Tap Connect above.</string>
+    <string name="mode_single">One connection at a time · not combined</string>
+    <string name="mode_switched">Switched to %1$s %2$s · not combined</string>
+    <string name="mode_offline">No connection right now</string>
     <string name="usage_mobile">Mobile data since phone restart: %1$s</string>
     <string name="usage_wifi">Wi-Fi and other since restart: %1$s</string>
     <string name="usage_unavailable">Data use isn\'t available on this phone.</string>
@@ -108,7 +116,11 @@
     <string name="list_seed">Ads and trackers (starter list)</string>
     <string name="list_status_ready">%1$s sites · updated %2$s</string>
     <string name="list_status_waiting">Will download when protection is on</string>
-    <string name="list_status_error">Update failed, using the previous list. %1$s</string>
+    <string name="list_status_off">Off</string>
+    <string name="list_status_soon">Downloading soon…</string>
+    <string name="list_status_error_prev">Update failed. Still using the list from %1$s.</string>
+    <string name="list_status_error_none">Couldn\'t download yet. Will try again automatically.</string>
+    <string name="list_status_error_seed">Couldn\'t download yet. Will try again automatically. Using the built-in starter list meanwhile.</string>
     <string name="update_lists">Update lists now</string>
     <string name="updating_lists">Updating lists…</string>
     <string name="lists_updated">Lists are up to date</string>

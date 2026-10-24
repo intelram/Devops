@@ -150,7 +150,11 @@ class Blocklists(private val context: Context, private val prefs: Prefs) {
         }
     }
 
-    private fun publish(errors: Map<String, String> = emptyMap()) {
+    /** Errors from the most recent update, kept so a recreated screen still shows them. */
+    @Volatile private var lastErrors: Map<String, String> = emptyMap()
+
+    private fun publish(errors: Map<String, String> = lastErrors) {
+        lastErrors = errors
         _status.value = SOURCES.map {
             ListStatus(it.id, loaded[it.id]?.size ?: 0, prefs.listUpdatedAt(it.id), errors[it.id])
         }

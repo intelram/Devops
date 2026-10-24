@@ -21,6 +21,15 @@
         <Button android:id="@+id/resume_button" android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" android:text="@string/resume_now" android:visibility="gone" />
 
+        <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/home_block_title" android:accessibilityHeading="true" />
+            <Switch android:id="@+id/home_ads_switch" style="@style/SwitchRow" android:text="@string/list_ads" />
+            <Switch android:id="@+id/home_harmful_switch" style="@style/SwitchRow" android:text="@string/list_harmful" />
+            <TextView android:id="@+id/home_block_note" style="@style/Text.Secondary" android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
         <LinearLayout android:id="@+id/problems_card" style="@style/Card" android:visibility="gone">
             <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/problems_title" android:accessibilityHeading="true" />
@@ -42,6 +51,10 @@
                     android:src="@drawable/ic_info" android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/cd_info" />
             </LinearLayout>
+            <TextView android:id="@+id/mode_chip" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:background="@drawable/nav_pill" android:paddingStart="10dp" android:paddingEnd="10dp"
+                android:paddingTop="4dp" android:paddingBottom="4dp" android:textSize="14sp" android:textStyle="bold"
+                android:textColor="@color/primary" android:layout_marginBottom="6dp" android:accessibilityLiveRegion="polite" />
             <TextView android:id="@+id/using_detail" style="@style/Text.Secondary" android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -77,8 +90,10 @@
         <LinearLayout style="@style/Card">
             <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/usage_title" android:accessibilityHeading="true" />
-            <TextView android:id="@+id/usage_mobile" style="@style/Text.Body" android:layout_width="match_parent"
+            <TextView android:id="@+id/usage_today" style="@style/Text.Body" android:textStyle="bold" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:layout_marginTop="6dp" />
+            <TextView android:id="@+id/usage_mobile" style="@style/Text.Body" android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             <TextView android:id="@+id/usage_wifi" style="@style/Text.Body" android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
             <TextView android:id="@+id/battery_status" style="@style/Text.Body" android:layout_width="match_parent"

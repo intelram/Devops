@@ -11,8 +11,8 @@ android {
         applicationId = "dev.netpilot.app"
         minSdk = 29          // Settings.Panel, NetworkCapabilities.signalStrength
         targetSdk = 35       // screens apply window insets themselves (edge-to-edge)
-        versionCode = 3
-        versionName = "0.2.1"
+        versionCode = 4
+        versionName = "0.2.2"
     }
 
     // Release signing reads keystore.properties (git-ignored). See docs/DESIGN.md §5.

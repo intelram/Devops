@@ -227,6 +227,7 @@ class ShieldVpnService : VpnService() {
         while (running) {
             try { Thread.sleep(1_000) } catch (_: InterruptedException) { return }
             app.stats.flush(persist = ++n % 30 == 0)
+            if (n % 30 == 0) app.mobileToday()
             val wasPaused = _state.value == ShieldState.PAUSED
             val paused = System.currentTimeMillis() < _pausedUntil.value
             if (paused != wasPaused) { _state.value = if (paused) ShieldState.PAUSED else ShieldState.ON; requestTileRefresh() }

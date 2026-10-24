@@ -1,5 +1,7 @@
 # NetPilot: ad and tracker blocking plus Wi-Fi/mobile-data monitoring for Android (no server)
 
+**Phase 3 (UX):** [`docs/PHASE3_UX.md`](docs/PHASE3_UX.md) has the screen-by-screen user journey with screenshots from a real Android 11 system, the accessibility results, and how each brief item was delivered.
+
 **What's new in 0.2:** [`docs/V0.2_PROTECTION_AND_UI.md`](docs/V0.2_PROTECTION_AND_UI.md) covers the on-phone protection VPN, the simplified four-tab interface, and what is and isn't verified.
 
 **Read [`docs/DESIGN.md`](docs/DESIGN.md) first.** It covers the feasibility analysis, architecture, plan, build and

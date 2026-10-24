@@ -2,6 +2,7 @@ package dev.netpilot.app
 
 import android.content.Context
 import dev.netpilot.core.Mode
+import dev.netpilot.core.UsageState
 
 /** Encrypted-DNS upstreams offered in Settings. All are DNS-over-HTTPS (RFC 8484). */
 enum class DnsProvider(val url: String, val title: Int, val detail: Int) {
@@ -96,5 +97,18 @@ class Prefs(context: Context) {
         .putString("statDay", day).putLong("statBlockedDay", blockedDay)
         .putLong("statCheckedDay", checkedDay).putLong("statBlockedAll", blockedAll).apply()
 
-    fun clearStats() = p.edit().remove("statDay").remove("statBlockedDay").remove("statCheckedDay").remove("statBlockedAll").apply()
+    /** Last 50 history lines as "time|text", newest first. Stays on the phone. */
+    fun loadHistory(): List<HistoryItem> = (p.getString("history", "") ?: "").lines().mapNotNull { line ->
+        val i = line.indexOf('|'); if (i <= 0) null else line.substring(0, i).toLongOrNull()?.let { HistoryItem(it, line.substring(i + 1)) }
+    }
+    fun saveHistory(items: List<HistoryItem>) =
+        p.edit().putString("history", items.take(50).joinToString("\n") { "${it.time}|${it.text.replace('\n', ' ')}" }).apply()
+
+    fun loadUsage(): UsageState? = p.getString("usageDay", null)?.let {
+        UsageState(it, p.getLong("usageBoot", 0), p.getLong("usageLast", 0), p.getLong("usageToday", 0))
+    }
+    fun saveUsage(u: UsageState) = p.edit().putString("usageDay", u.day).putLong("usageBoot", u.bootId)
+        .putLong("usageLast", u.lastCounter).putLong("usageToday", u.today).apply()
+
+    fun clearStats() = p.edit().remove("history").remove("statDay").remove("statBlockedDay").remove("statCheckedDay").remove("statBlockedAll").apply()
 }

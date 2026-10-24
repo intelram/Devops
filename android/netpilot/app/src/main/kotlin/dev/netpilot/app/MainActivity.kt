@@ -87,6 +87,10 @@ class MainActivity : Activity() {
     private var lastTx = -1L
     private var lastRx = -1L
     private var lastSpeedAt = 0L
+    private val listSwitches = HashMap<String, MutableList<Switch>>()
+    private var syncingSwitches = false
+    private var shownBlocked = -1L
+    private var lastUsageSample = 0L
     /** Connect was requested while the notification prompt was showing; continue when it closes. */
     private var connectAfterPermission = false
 
@@ -105,6 +109,7 @@ class MainActivity : Activity() {
             v.findViewById<ImageView>(R.id.nav_icon).setImageResource(navIcons[i])
             v.findViewById<TextView>(R.id.nav_label).setText(navLabels[i])
             v.setOnClickListener { selectTab(i) }
+            v.tooltipText = getString(navLabels[i])
         }
 
         setupHome(); setupProtection(); setupNetwork(); setupSettings()
@@ -177,6 +182,10 @@ class MainActivity : Activity() {
     private fun selectTab(i: Int) {
         currentTab = i
         tabs.forEachIndexed { k, v -> v.visibility = if (k == i) View.VISIBLE else View.GONE }
+        if (android.animation.ValueAnimator.areAnimatorsEnabled()) {
+            tabs[i].alpha = 0f
+            tabs[i].animate().alpha(1f).setDuration(180).start()
+        }
         navItems.forEachIndexed { k, v ->
             val sel = k == i
             val color = getColor(if (sel) R.color.primary else R.color.text_secondary)
@@ -239,8 +248,16 @@ class MainActivity : Activity() {
     private fun setupHome() {
         findViewById<ConnectButton>(R.id.connect_button).setOnClickListener { onConnectTapped() }
         findViewById<Button>(R.id.resume_button).setOnClickListener { ShieldVpnService.resumeNow() }
-        findViewById<ImageButton>(R.id.using_info).setOnClickListener { dialog(R.string.bonding_title, getString(R.string.bonding_text)) }
-        findViewById<ImageButton>(R.id.blocked_info).setOnClickListener { dialog(R.string.blocked_info_title, getString(R.string.blocked_info_text)) }
+        findViewById<ImageButton>(R.id.using_info).apply {
+            setOnClickListener { dialog(R.string.bonding_title, getString(R.string.bonding_text)) }
+            tooltipText = getString(R.string.bonding_title)
+        }
+        findViewById<ImageButton>(R.id.blocked_info).apply {
+            setOnClickListener { dialog(R.string.blocked_info_title, getString(R.string.blocked_info_text)) }
+            tooltipText = getString(R.string.blocked_info_title)
+        }
+        bindListSwitch("ads", findViewById(R.id.home_ads_switch))
+        bindListSwitch("harmful", findViewById(R.id.home_harmful_switch))
         findViewById<Button>(R.id.battery_fix).setOnClickListener { openBatterySettings() }
         findViewById<Button>(R.id.history_more).setOnClickListener { historyExpanded = !historyExpanded; renderConnection() }
         card(R.id.card_wifi, R.drawable.ic_wifi, R.string.wifi)
@@ -286,6 +303,7 @@ class MainActivity : Activity() {
             }
         }
         findViewById<Button>(R.id.pause_button).isEnabled = s == ShieldState.ON
+        findViewById<TextView>(R.id.home_block_note).setText(if (s == ShieldState.OFF) R.string.home_block_note_off else R.string.home_block_note_on)
         renderSettings()
         renderConnection()
     }
@@ -345,13 +363,15 @@ class MainActivity : Activity() {
             card.contentDescription = "${transportName(t)}: $text"
         }
 
-        val def = st.links.firstOrNull { it.id == st.systemDefaultId }
+        val def = physicalDefault(st)
         findViewById<TextView>(R.id.using_text).setText(when (def?.transport) {
             Transport.WIFI -> R.string.using_wifi
             Transport.CELLULAR -> R.string.using_mobile
             null -> R.string.using_none
+            Transport.ETHERNET -> R.string.using_wired
             else -> R.string.using_other
         })
+        findViewById<TextView>(R.id.mode_chip).text = modeText(def?.transport, st.history)
         findViewById<TextView>(R.id.using_detail).setText(when {
             !st.running -> R.string.using_detail_monitor_off
             linkOf(Transport.WIFI) != null && linkOf(Transport.CELLULAR) != null -> R.string.using_detail_backup
@@ -378,6 +398,29 @@ class MainActivity : Activity() {
         renderNetworkTab()
     }
 
+    /**
+     * The real connection underneath. While protection is on, Android may report NetPilot's own
+     * VPN as the default network; the user cares about Wi-Fi / mobile data / wired, so look past it.
+     */
+    private fun physicalDefault(st: UiState): LinkSnapshot? {
+        val physical = st.links.filter { it.transport != Transport.VPN }
+        physical.firstOrNull { it.id == st.systemDefaultId }?.let { return it }
+        return physical.firstOrNull { it.probe?.reachable ?: it.validated }
+            ?: physical.firstOrNull { it.transport == Transport.WIFI }
+            ?: physical.firstOrNull()
+    }
+
+    /** Plain answer to "is my traffic combined?": never, and say when the phone last switched. */
+    private fun modeText(current: Transport?, history: List<HistoryItem>): String {
+        if (current == null) return getString(R.string.mode_offline)
+        val prefix = getString(R.string.hist_now_using, "").trim()
+        val lastSwitch = history.firstOrNull { it.text.startsWith(prefix) }
+        val recent = lastSwitch != null && System.currentTimeMillis() - lastSwitch.time < 10 * 60_000
+        if (!recent) return getString(R.string.mode_single)
+        val ago = DateUtils.getRelativeTimeSpanString(lastSwitch!!.time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
+        return getString(R.string.mode_switched, transportName(current), ago)
+    }
+
     private fun problemRow(f: Finding): View {
         val t = app.controller.state.value.links.firstOrNull { it.id == f.linkId }?.transport
         val a = Plain.advice(f, t?.let(::transportName))
@@ -386,10 +429,24 @@ class MainActivity : Activity() {
 
     private fun renderStats() {
         val s = app.stats.state.value
-        findViewById<TextView>(R.id.blocked_count).text = nf.format(s.blockedToday)
+        animateCount(findViewById(R.id.blocked_count), s.blockedToday)
         findViewById<TextView>(R.id.blocked_detail).text =
             getString(R.string.blocked_detail, nf.format(s.checkedToday), nf.format(s.blockedAllTime))
         if (currentTab == 1) renderActivity()
+    }
+
+    /** Counts up to the new value (skipped when animations are off, or on the first render). */
+    private fun animateCount(tv: TextView, target: Long) {
+        val from = shownBlocked
+        shownBlocked = target
+        if (from < 0 || from == target || !android.animation.ValueAnimator.areAnimatorsEnabled() || target - from > 5_000) {
+            tv.text = nf.format(target); return
+        }
+        android.animation.ValueAnimator.ofFloat(from.toFloat(), target.toFloat()).apply {
+            duration = 450
+            addUpdateListener { tv.text = nf.format((it.animatedValue as Float).toLong()) }
+            start()
+        }
     }
 
     private fun renderSpeedAndUsage() {
@@ -412,6 +469,10 @@ class MainActivity : Activity() {
         val um = findViewById<TextView>(R.id.usage_mobile)
         val uw = findViewById<TextView>(R.id.usage_wifi)
         if (TrafficStats.getMobileRxBytes() >= 0 && rx >= 0) {
+            if (now - lastUsageSample > 10_000) {
+                lastUsageSample = now
+                findViewById<TextView>(R.id.usage_today).text = getString(R.string.usage_today, Formatter.formatShortFileSize(this, app.mobileToday()))
+            }
             um.text = getString(R.string.usage_mobile, Formatter.formatShortFileSize(this, mobile))
             uw.text = getString(R.string.usage_wifi, Formatter.formatShortFileSize(this, (total - mobile).coerceAtLeast(0)))
         } else {
@@ -437,15 +498,8 @@ class MainActivity : Activity() {
         val lc = findViewById<LinearLayout>(R.id.lists_container)
         for (src in Blocklists.SOURCES) {
             val row = LayoutInflater.from(this).inflate(R.layout.row_item, lc, false) as LinearLayout
-            val sw = Switch(this).apply {
-                isChecked = prefs.listEnabled(src.id)
-                contentDescription = getString(src.title)
-                setOnCheckedChangeListener { _, on ->
-                    prefs.setListEnabled(src.id, on)
-                    app.blocklists.rebuild()
-                    if (on && ShieldVpnService.state.value != ShieldState.OFF) updateListsInBackground(force = false)
-                }
-            }
+            val sw = Switch(this).apply { contentDescription = getString(src.title) }
+            bindListSwitch(src.id, sw)
             row.addView(sw)
             row.findViewById<TextView>(R.id.row_title).setText(src.title)
             row.tag = src.id
@@ -466,6 +520,21 @@ class MainActivity : Activity() {
         renderUserLists()
     }
 
+    /** One setting, several switches (Home quick toggles and the Protection tab): keep them all in step. */
+    private fun bindListSwitch(id: String, sw: Switch) {
+        listSwitches.getOrPut(id) { mutableListOf() } += sw
+        sw.isChecked = prefs.listEnabled(id)
+        sw.setOnCheckedChangeListener { _, on ->
+            if (syncingSwitches) return@setOnCheckedChangeListener
+            prefs.setListEnabled(id, on)
+            syncingSwitches = true
+            listSwitches[id]?.forEach { if (it !== sw) it.isChecked = on }
+            syncingSwitches = false
+            app.blocklists.rebuild()
+            if (on && ShieldVpnService.state.value != ShieldState.OFF) updateListsInBackground(force = false)
+        }
+    }
+
     private fun updateListsInBackground(force: Boolean) {
         Thread {
             val ok = runCatching { app.blocklists.update(force) }.isSuccess &&
@@ -481,10 +550,13 @@ class MainActivity : Activity() {
             val row = lc.getChildAt(i)
             val src = Blocklists.SOURCES.first { it.id == row.tag }
             val st = status[src.id]
+            val since = st?.let { DateUtils.getRelativeTimeSpanString(it.updatedAt, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS) }
             val line = when {
-                st?.error != null -> getString(R.string.list_status_error, "")
-                st != null && st.domains > 0 -> getString(R.string.list_status_ready, nf.format(st.domains),
-                    DateUtils.getRelativeTimeSpanString(st.updatedAt, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS))
+                !prefs.listEnabled(src.id) -> getString(R.string.list_status_off)
+                st?.error != null && st.domains > 0 -> getString(R.string.list_status_error_prev, since)
+                st?.error != null -> getString(if (src.id == "ads") R.string.list_status_error_seed else R.string.list_status_error_none)
+                st != null && st.domains > 0 -> getString(R.string.list_status_ready, nf.format(st.domains), since)
+                ShieldVpnService.state.value != ShieldState.OFF -> getString(R.string.list_status_soon)
                 else -> getString(R.string.list_status_waiting)
             }
             row.findViewById<TextView>(R.id.row_subtitle).apply { visibility = View.VISIBLE; text = getString(src.detail) + "\n" + line }
@@ -614,7 +686,9 @@ class MainActivity : Activity() {
         val st = app.controller.state.value
         val nc = findViewById<LinearLayout>(R.id.networks_container)
         nc.removeAllViews()
-        for ((t, icon) in listOf(Transport.WIFI to R.drawable.ic_wifi, Transport.CELLULAR to R.drawable.ic_cell)) {
+        // Wi-Fi and mobile data always (even when off), plus any other connection in use, e.g. wired.
+        val others = st.links.map { it.transport }.filter { it == Transport.ETHERNET || it == Transport.OTHER }.distinct()
+        for ((t, icon) in listOf(Transport.WIFI to R.drawable.ic_wifi, Transport.CELLULAR to R.drawable.ic_cell) + others.map { it to R.drawable.ic_swap }) {
             val l = linkOf(t)
             val detail = l?.let {
                 getString(R.string.network_card_detail,
@@ -710,7 +784,11 @@ class MainActivity : Activity() {
         for (p in DnsProvider.entries) {
             group.addView(RadioButton(this).apply {
                 id = View.generateViewId()
-                text = getString(p.title) + "\n" + getString(p.detail)
+                // Provider name in bold, reason underneath: easier to scan than one paragraph.
+                val title = getString(p.title)
+                text = android.text.SpannableString(title + "\n" + getString(p.detail)).apply {
+                    setSpan(android.text.style.StyleSpan(android.graphics.Typeface.BOLD), 0, title.length, 0)
+                }
                 minHeight = dp(56)
                 tag = p
                 setTextColor(getColor(R.color.text_primary))
