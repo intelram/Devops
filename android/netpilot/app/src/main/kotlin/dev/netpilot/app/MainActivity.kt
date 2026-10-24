@@ -297,6 +297,10 @@ class MainActivity : Activity() {
                     .setNegativeButton(R.string.cancel, null).show()
             }
         }
+        findViewById<Switch>(R.id.both_split_switch).apply {
+            isChecked = prefs.spreadSplitSites
+            setOnCheckedChangeListener { _, on -> prefs.spreadSplitSites = on } // read per new connection: no reconnect
+        }
         findViewById<Button>(R.id.st_run).setOnClickListener { askSpeedTest() }
         findViewById<Button>(R.id.st_history).setOnClickListener { showSpeedHistory() }
     }
@@ -323,6 +327,8 @@ class MainActivity : Activity() {
             !bothUp -> R.string.both_waiting
             else -> R.string.both_active
         })
+        findViewById<View>(R.id.both_split_switch).visibility = if (on) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.both_split_note).visibility = if (on) View.VISIBLE else View.GONE
         val show = use != null && use.isNotEmpty()
         findViewById<View>(R.id.both_bar).visibility = if (show) View.VISIBLE else View.GONE
         findViewById<TextView>(R.id.both_split).visibility = if (show) View.VISIBLE else View.GONE

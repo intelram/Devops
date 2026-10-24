@@ -216,7 +216,7 @@ class ShieldVpnService : VpnService() {
 
     private fun startSpreading() {
         if (engine != null) return
-        val d = SpreadDialer(getSystemService(ConnectivityManager::class.java)) { t -> app.lastSpeed(t) }
+        val d = SpreadDialer(getSystemService(ConnectivityManager::class.java), { app.prefs.spreadSplitSites }) { t -> app.lastSpeed(t) }
         d.refresh()
         // Small stacks: forwarding threads only copy bytes, and there can be hundreds of them.
         val threads = Executors.newCachedThreadPool { r -> Thread(null, r, "spread", 256L shl 10).apply { isDaemon = true } }

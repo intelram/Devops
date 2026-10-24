@@ -127,6 +127,11 @@ class Prefs(context: Context) {
         get() = p.getBoolean("spread", false)
         set(v) = p.edit().putBoolean("spread", v).apply()
 
+    /** "Maximum speed": also split connections to the same server between the networks. */
+    var spreadSplitSites: Boolean
+        get() = p.getBoolean("spreadSplit", false)
+        set(v) = p.edit().putBoolean("spreadSplit", v).apply()
+
     /** Speed test results, newest first (last 10). */
     fun loadSpeedHistory(): List<SpeedResult> =
         (p.getString("speedHistory", "") ?: "").lines().mapNotNull { SpeedResult.decode(it) }

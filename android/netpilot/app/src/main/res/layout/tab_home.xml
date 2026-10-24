@@ -68,6 +68,9 @@
                     android:contentDescription="@string/cd_info" />
             </LinearLayout>
             <Switch android:id="@+id/both_switch" style="@style/SwitchRow" android:text="@string/both_switch" />
+            <Switch android:id="@+id/both_split_switch" style="@style/SwitchRow" android:text="@string/both_split_switch" android:visibility="gone" />
+            <TextView android:id="@+id/both_split_note" style="@style/Text.Secondary" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="@string/both_split_note" android:visibility="gone" />
             <TextView android:id="@+id/both_detail" style="@style/Text.Secondary" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:accessibilityLiveRegion="polite" />
             <LinearLayout android:id="@+id/both_bar" android:layout_width="match_parent" android:layout_height="12dp"

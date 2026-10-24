@@ -45,4 +45,11 @@ class SpreadPolicyTest {
         assertEquals(1, SpreadPolicy.weightFor(0.2))
         assertEquals(87, SpreadPolicy.weightFor(87.4))
     }
+
+    @Test fun maximumSpeedSplitsOneServer() {
+        val p = SpreadPolicy()
+        val picks = (1..30).map { p.pick("speedtest.example", two, sticky = false) }
+        assertEquals(20, picks.count { it == "wifi" })
+        assertEquals(10, picks.count { it == "cell" })
+    }
 }

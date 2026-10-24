@@ -28,13 +28,16 @@ class SpreadPolicy(
     /**
      * Network id for a new connection to [destination], or null if there is no candidate.
      * [exclude] is a network that just failed for this destination; the choice moves elsewhere.
+     * With [sticky] false every connection is shared out on its own, even to the same server:
+     * faster for multi-connection downloads and speed tests, but a site that ties a login to
+     * the client's IP address may sign the user out.
      */
     @Synchronized
-    fun pick(destination: String, candidates: List<Candidate>, exclude: String? = null): String? {
+    fun pick(destination: String, candidates: List<Candidate>, exclude: String? = null, sticky: Boolean = true): String? {
         val usable = candidates.filter { it.weight > 0 && it.id != exclude }
         if (usable.isEmpty()) return null
         val now = clock()
-        sticky[destination]?.let { a ->
+        if (sticky) this.sticky[destination]?.let { a ->
             if (now - a.lastUsed < stickyMs && usable.any { it.id == a.id }) { a.lastUsed = now; return a.id }
         }
         val total = usable.sumOf { it.weight.toLong() }
@@ -48,7 +51,7 @@ class SpreadPolicy(
         val chosen = best!!
         current[chosen.id] = bestScore - total
         current.keys.retainAll(usable.map { it.id }.toSet())
-        sticky[destination] = Assignment(chosen.id, now)
+        if (sticky) this.sticky[destination] = Assignment(chosen.id, now)
         return chosen.id
     }
 

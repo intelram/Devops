@@ -347,4 +347,6 @@
     <string name="fd_split">%1$s %2$d%%</string>
     <string name="alert_plain_title">Encrypted DNS isn\'t working here</string>
     <string name="alert_plain_text">Website lookups now use this network\'s own DNS, which the network can see and change. Normal on sign-in pages (hotels, cafés). If it keeps happening, someone may be blocking encrypted DNS: turn off \"Use the network\'s DNS if encrypted DNS fails\" in Settings to stop lookups instead.</string>
+    <string name="both_split_switch">Maximum speed: split within one website too</string>
+    <string name="both_split_note">Speed tests, and download apps that open several connections, then use both networks for the same server. A few sites (banks, some shops) may sign you out because your address keeps changing. Videos and video calls still use one network.</string>
 </resources>

@@ -16,7 +16,12 @@ import java.net.InetSocketAddress
  * is excluded from its own VPN, and every socket is also bound to an explicit network, so
  * forwarded traffic can never loop back into the tunnel.
  */
-class SpreadDialer(private val cm: ConnectivityManager, private val speedFor: (Transport) -> Double?) : Dialer {
+class SpreadDialer(
+    private val cm: ConnectivityManager,
+    /** True for "maximum speed": share out every connection, even several to the same server. */
+    private val splitSites: () -> Boolean = { false },
+    private val speedFor: (Transport) -> Double?,
+) : Dialer {
 
     class Link(val id: String, val network: Network, val transport: Transport, val weight: Int, val ipv6: Boolean)
 
@@ -62,7 +67,7 @@ class SpreadDialer(private val cm: ConnectivityManager, private val speedFor: (T
         var failed: String? = null
         var last: IOException? = null
         repeat(2) {
-            val id = policy.pick(key, candidates(v6), exclude = failed) ?: throw last ?: IOException("no network")
+            val id = policy.pick(key, candidates(v6), exclude = failed, sticky = !splitSites()) ?: throw last ?: IOException("no network")
             val link = links.firstOrNull { it.id == id } ?: throw IOException("network gone")
             try {
                 val s = link.network.socketFactory.createSocket()
@@ -81,7 +86,7 @@ class SpreadDialer(private val cm: ConnectivityManager, private val speedFor: (T
 
     override fun openUdp(dst: InetSocketAddress): Dialer.Udp {
         val v6 = dst.address is Inet6Address
-        val id = policy.pick(dst.address.hostAddress ?: "", candidates(v6)) ?: throw IOException("no network")
+        val id = policy.pick(dst.address.hostAddress ?: "", candidates(v6), sticky = !splitSites()) ?: throw IOException("no network")
         val link = links.firstOrNull { it.id == id } ?: throw IOException("network gone")
         val s = DatagramSocket()
         try {
