@@ -88,13 +88,13 @@ class MultipathDownloader(
                 currentCoroutineContext().ensureActive()
                 val body = fetchRange(net, url, r, meta.validator)
                 synchronized(raf) { raf.seek(r.start); raf.write(body) }
-                sched.complete(r)
+                sched.complete(r, id)
                 failures = 0
                 onProgress(sched.completed(), meta.length)
             } catch (e: NotRangeCapable) {
-                sched.fail(r); throw e // object changed mid-download: abort everything
+                sched.fail(r, id); throw e // object changed mid-download: abort everything
             } catch (e: IOException) {
-                sched.fail(r)
+                sched.fail(r, id)
                 if (++failures >= 3) return // give this link up; others drain the queue
                 delay(500L * failures)
             }

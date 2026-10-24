@@ -50,7 +50,7 @@ import sys
 s = open(sys.argv[1]).read()
 tag = '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
 assert tag in s, "manifest root changed; update build-apk-no-agp.sh"
-s = s.replace(tag, tag[:-1] + ' package="dev.netpilot.app" android:versionCode="4" android:versionName="0.2.2">\n'
+s = s.replace(tag, tag[:-1] + ' package="dev.netpilot.app" android:versionCode="5" android:versionName="0.2.3">\n'
               '    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="35" />', 1)
 open(sys.argv[2], "w").write(s)
 EOF
