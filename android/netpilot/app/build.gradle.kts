@@ -11,8 +11,8 @@ android {
         applicationId = "dev.netpilot.app"
         minSdk = 29          // Settings.Panel, NetworkCapabilities.signalStrength
         targetSdk = 35       // screens apply window insets themselves (edge-to-edge)
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.2.1"
     }
 
     // Release signing reads keystore.properties (git-ignored). See docs/DESIGN.md §5.
@@ -37,6 +37,9 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true // Robolectric launch tests use the real resources
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -51,4 +54,7 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.17")
 }

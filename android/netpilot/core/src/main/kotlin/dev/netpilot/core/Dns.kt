@@ -16,7 +16,8 @@ object Dns {
     const val TYPE_AAAA = 28
     const val RCODE_SERVFAIL = 2
     const val RCODE_NXDOMAIN = 3
-    private const val BLOCKED_TTL = 60
+    // Short, so "Pause" and "Allow" take effect within seconds despite the OS resolver cache.
+    private const val BLOCKED_TTL = 10
 
     /** Parses a standard query with exactly one question. Returns null for anything else. */
     fun parseQuery(msg: ByteArray): DnsQuery? {

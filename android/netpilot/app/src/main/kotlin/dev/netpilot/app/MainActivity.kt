@@ -260,7 +260,9 @@ class MainActivity : Activity() {
 
     private fun statValue(id: Int, value: String) {
         val v = findViewById<View>(id)
-        v.findViewById<TextView>(R.id.stat_value).text = value
+        val tv = v.findViewById<TextView>(R.id.stat_value)
+        if (tv.text.toString() == value) return // no redraw or accessibility event when nothing changed
+        tv.text = value
         v.contentDescription = "${v.findViewById<TextView>(R.id.stat_label).text}: $value"
     }
 
@@ -394,6 +396,7 @@ class MainActivity : Activity() {
         val now = System.currentTimeMillis()
         val rx = TrafficStats.getTotalRxBytes()
         val tx = TrafficStats.getTotalTxBytes()
+        if (currentTab != 0) { lastRx = rx; lastTx = tx; lastSpeedAt = now; return } // only Home shows these
         if (rx >= 0 && lastRx >= 0 && now > lastSpeedAt) {
             val sec = (now - lastSpeedAt) / 1000.0
             statValue(R.id.stat_down, bitrate((rx - lastRx) * 8 / sec))
@@ -635,7 +638,12 @@ class MainActivity : Activity() {
         else -> R.string.signal_weak
     })
 
-    private fun transportName(t: Transport) = getString(if (t == Transport.CELLULAR) R.string.mobile_data else R.string.wifi)
+    private fun transportName(t: Transport) = getString(when (t) {
+        Transport.CELLULAR -> R.string.mobile_data
+        Transport.ETHERNET -> R.string.ethernet
+        Transport.WIFI -> R.string.wifi
+        else -> R.string.other_network
+    })
 
     private fun technicalDetails(): String {
         val s = app.controller.state.value

@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Process
 import android.provider.Settings
 import android.util.Log
@@ -196,9 +197,16 @@ class FailoverController(context: Context, private val scope: CoroutineScope) {
         _state.value = _state.value.copy(history = (items.map { HistoryItem(t, it) } + _state.value.history).take(100))
     }
 
+    /**
+     * Android 11+ reports our UID as the owner of our own VPN (other apps' VPNs show INVALID_UID).
+     * Android 10 has no ownerUid, so there a VPN counts as ours while protection is running.
+     */
+    private fun isOwnVpn(c: NetworkCapabilities): Boolean =
+        if (Build.VERSION.SDK_INT >= 30) c.ownerUid == Process.myUid()
+        else ShieldVpnService.state.value != ShieldState.OFF
+
     private fun deviceState(links: Collection<OsLink>) = DeviceState(
-        // Our own VPN reports our UID as owner; other apps' VPNs hide it (INVALID_UID).
-        anyVpnActive = links.any { it.caps?.let { c -> c.hasTransport(NetworkCapabilities.TRANSPORT_VPN) && c.ownerUid != Process.myUid() } == true },
+        anyVpnActive = links.any { it.caps?.let { c -> c.hasTransport(NetworkCapabilities.TRANSPORT_VPN) && !isOwnVpn(c) } == true },
         dataSaverOn = cm.restrictBackgroundStatus == ConnectivityManager.RESTRICT_BACKGROUND_STATUS_ENABLED,
         backgroundRestricted = app.getSystemService(android.app.ActivityManager::class.java).isBackgroundRestricted,
         airplaneMode = Settings.Global.getInt(app.contentResolver, Settings.Global.AIRPLANE_MODE_ON, 0) == 1,

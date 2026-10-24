@@ -40,7 +40,7 @@ class DnsTest {
         assertEquals(0x8180, Dns.u16(r, 2))        // QR RD RA, NOERROR
         assertEquals(1, Dns.u16(r, 6))             // one answer
         assertContentEquals(ByteArray(4), r.copyOfRange(r.size - 4, r.size))
-        assertEquals(60, Dns.minAnswerTtl(r))
+        assertEquals(10, Dns.minAnswerTtl(r))
     }
 
     @Test fun blockedAaaaIs16ZeroBytes() {
@@ -72,10 +72,10 @@ class DnsTest {
     @Test fun cacheHonoursTtlAndId() {
         var now = 0L
         val cache = DnsCache(clock = { now })
-        val r = Dns.blockedResponse(Dns.parseQuery(query("a.example.com", 1))!!) // TTL 60
+        val r = Dns.blockedResponse(Dns.parseQuery(query("a.example.com", 1))!!) // TTL 10, clamped up to the 30 s minimum
         cache.put("a.example.com", 1, r)
         assertEquals(0x55, Dns.u16(cache.get("a.example.com", 1, 0x55)!!, 0))
-        now += 59_000
+        now += 29_000
         assertNotNull(cache.get("a.example.com", 1, 1))
         now += 2_000
         assertNull(cache.get("a.example.com", 1, 1))

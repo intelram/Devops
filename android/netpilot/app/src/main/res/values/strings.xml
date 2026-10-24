@@ -2,6 +2,8 @@
     <string name="app_name">NetPilot</string>
     <string name="wifi">Wi-Fi</string>
     <string name="mobile_data">Mobile data</string>
+    <string name="ethernet">Wired connection</string>
+    <string name="other_network">Your connection</string>
 
     <!-- Navigation -->
     <string name="nav_home">Home</string>

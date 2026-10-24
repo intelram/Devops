@@ -84,7 +84,7 @@ class ConnectButton @JvmOverloads constructor(ctx: Context, attrs: AttributeSet?
         if (state == ShieldState.CONNECTING) c.drawArc(box, phase * 360f - 90f, 90f, false, ring)
         else c.drawCircle(cx, cy, r, ring)
 
-        val iconColor = context.getColor(if (on) R.color.on_good else accent)
+        val iconColor = if (on) context.getColor(R.color.on_good) else accent // accent is already a colour, not a resource id
         val isz = (r * 0.62f).toInt()
         icon.setTint(iconColor)
         icon.setBounds((cx - isz / 2).toInt(), (cy - isz * 0.75f).toInt(), (cx + isz / 2).toInt(), (cy + isz * 0.25f).toInt())

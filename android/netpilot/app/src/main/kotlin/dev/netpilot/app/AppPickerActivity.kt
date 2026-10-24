@@ -59,7 +59,10 @@ class AppPickerActivity : Activity() {
                 val checked = item.pkg in selected
                 v.findViewById<CheckBox>(R.id.app_check).isChecked = checked
                 v.contentDescription = item.label
-                v.stateDescription = getString(if (checked) R.string.app_skips else R.string.app_protected)
+                // stateDescription exists from Android 11; on Android 10 the checkbox state is read instead.
+                if (android.os.Build.VERSION.SDK_INT >= 30) {
+                    v.stateDescription = getString(if (checked) R.string.app_skips else R.string.app_protected)
+                }
                 return v
             }
         }
