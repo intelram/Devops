@@ -72,4 +72,37 @@ class LaunchTest {
         val d = ShadowAlertDialog.getLatestAlertDialog()
         assertNotNull(d); assertTrue(d.isShowing)
     }
+
+    @Test fun sharedLinkGoesToFastDownloadWithoutStarting() {
+        (RuntimeEnvironment.getApplication() as NetPilotApp).prefs.onboarded = true
+        val share = android.content.Intent(android.content.Intent.ACTION_SEND).setType("text/plain")
+            .putExtra(android.content.Intent.EXTRA_TEXT, "Look at this: https://example.org/files/big.zip thanks")
+        val c = Robolectric.buildActivity(MainActivity::class.java, share).setup()
+        idle(); draw(c.get())
+        val a = c.get()
+        org.junit.Assert.assertEquals("https://example.org/files/big.zip", a.findViewById<android.widget.EditText>(R.id.fd_url).text.toString())
+        assertTrue(a.findViewById<View>(R.id.tab_network).visibility == View.VISIBLE)
+        org.junit.Assert.assertNull(FastDownloadService.state.value) // nothing starts without a tap
+    }
+
+    @Test fun usingBothAsksFirst() {
+        val app = RuntimeEnvironment.getApplication() as NetPilotApp
+        app.prefs.onboarded = true
+        val c = Robolectric.buildActivity(MainActivity::class.java).setup()
+        idle()
+        val sw = c.get().findViewById<android.widget.Switch>(R.id.both_switch)
+        sw.performClick(); idle()
+        assertTrue(!sw.isChecked && !app.prefs.spreadMode) // not yet: the explanation comes first
+        val d = ShadowAlertDialog.getLatestAlertDialog()
+        assertNotNull(d)
+        d.getButton(android.content.DialogInterface.BUTTON_POSITIVE).performClick(); idle()
+        assertTrue(sw.isChecked && app.prefs.spreadMode)
+        draw(c.get())
+    }
+
+    @Test fun fileNamesAreSafe() {
+        org.junit.Assert.assertEquals("report 2024.pdf", FastDownloadService.fileNameFor(java.net.URL("https://x.org/a/report%202024.pdf")))
+        org.junit.Assert.assertEquals("_.._etc_passwd", FastDownloadService.fileNameFor(java.net.URL("https://x.org/%2F..%2Fetc%2Fpasswd")))
+        org.junit.Assert.assertEquals("download", FastDownloadService.fileNameFor(java.net.URL("https://x.org/")))
+    }
 }

@@ -51,8 +51,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.io.File
-import java.net.URL
 import java.text.DateFormat
 import java.text.NumberFormat
 import java.util.Date
@@ -68,6 +66,8 @@ class MainActivity : Activity() {
 
     companion object {
         const val EXTRA_CONNECT = "connect"
+        const val EXTRA_TAB = "tab"
+        const val TAB_NETWORK = 2
         private const val REQ_VPN = 1
         private const val REQ_NOTIF = 2
         private const val REQ_ONBOARD = 3
@@ -93,6 +93,7 @@ class MainActivity : Activity() {
     private var lastUsageSample = 0L
     /** Connect was requested while the notification prompt was showing; continue when it closes. */
     private var connectAfterPermission = false
+    private var speedJob: Job? = null
 
     // ---------------------------------------------------------------- lifecycle
 
@@ -118,11 +119,23 @@ class MainActivity : Activity() {
         CrashLog.pending(this)?.let(::showCrashReport)
         if (!prefs.onboarded) startActivityForResult(Intent(this, OnboardingActivity::class.java), REQ_ONBOARD)
         else if (intent?.getBooleanExtra(EXTRA_CONNECT, false) == true) requestConnect()
+        if (savedInstanceState == null) intent?.let(::handleLinkIntent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (intent.getBooleanExtra(EXTRA_CONNECT, false)) requestConnect()
+        handleLinkIntent(intent)
+    }
+
+    /** A link shared from another app goes into Fast download (never started without a tap). */
+    private fun handleLinkIntent(i: Intent) {
+        if (i.hasExtra(EXTRA_TAB)) selectTab(i.getIntExtra(EXTRA_TAB, 0).coerceIn(0, 3))
+        if (i.action != Intent.ACTION_SEND) return
+        val text = i.getStringExtra(Intent.EXTRA_TEXT)?.take(4_096) ?: return
+        val link = Regex("""https://[^\s"'<>]+""").find(text)?.value ?: run { toast(getString(R.string.fd_https_only)); return }
+        selectTab(TAB_NETWORK)
+        findViewById<EditText>(R.id.fd_url).setText(link)
     }
 
     override fun onSaveInstanceState(out: Bundle) {
@@ -143,7 +156,10 @@ class MainActivity : Activity() {
             ui.launch { app.stats.state.collect { renderStats() } },
             ui.launch { combine(app.blocklists.status, app.blocklists.updating) { _, _ -> }.collect { renderLists() } },
             ui.launch { while (isActive) { renderSpeedAndUsage(); delay(1_000) } },
+            ui.launch { combine(ShieldVpnService.spread, ShieldVpnService.state) { _, _ -> }.collect { renderBoth() } },
+            ui.launch { FastDownloadService.state.collect { renderFastDownload() } },
         )
+        renderSpeedResult()
         app.blocklists.load()
         renderSettings()
     }
@@ -265,6 +281,137 @@ class MainActivity : Activity() {
         statLabel(R.id.stat_down, R.string.speed_down)
         statLabel(R.id.stat_up, R.string.speed_up)
         statLabel(R.id.stat_response, R.string.speed_response)
+
+        findViewById<ImageButton>(R.id.both_info).apply {
+            setOnClickListener { dialog(R.string.bonding_title, getString(R.string.bonding_text)) }
+            tooltipText = getString(R.string.bonding_title)
+        }
+        findViewById<Switch>(R.id.both_switch).apply {
+            isChecked = prefs.spreadMode
+            setOnCheckedChangeListener { sw, on ->
+                if (!on) { setSpread(false); return@setOnCheckedChangeListener }
+                if (prefs.spreadMode) return@setOnCheckedChangeListener
+                sw.isChecked = false // only after the user has read what it does
+                AlertDialog.Builder(this@MainActivity).setTitle(R.string.both_confirm_title).setMessage(R.string.both_confirm_text)
+                    .setPositiveButton(R.string.turn_on) { _, _ -> setSpread(true); sw.isChecked = true }
+                    .setNegativeButton(R.string.cancel, null).show()
+            }
+        }
+        findViewById<Button>(R.id.st_run).setOnClickListener { askSpeedTest() }
+        findViewById<Button>(R.id.st_history).setOnClickListener { showSpeedHistory() }
+    }
+
+    private fun setSpread(on: Boolean) {
+        if (prefs.spreadMode == on) return
+        prefs.spreadMode = on
+        app.controller.setKeepCellularUp(app.keepCellular)
+        if (ShieldVpnService.state.value != ShieldState.OFF) ShieldVpnService.send(this, ShieldVpnService.ACTION_RECONNECT)
+        renderBoth()
+        renderConnection()
+    }
+
+    private fun renderBoth() {
+        val use = ShieldVpnService.spread.value
+        val on = prefs.spreadMode
+        val shieldOn = ShieldVpnService.state.value != ShieldState.OFF
+        val wifi = use?.get(SpreadDialer.WIFI)
+        val cell = use?.get(SpreadDialer.CELL)
+        val bothUp = linkOf(Transport.WIFI)?.validated == true && linkOf(Transport.CELLULAR)?.validated == true
+        findViewById<TextView>(R.id.both_detail).setText(when {
+            !on -> R.string.both_off
+            !shieldOn -> R.string.both_needs_protection
+            !bothUp -> R.string.both_waiting
+            else -> R.string.both_active
+        })
+        val show = use != null && use.isNotEmpty()
+        findViewById<View>(R.id.both_bar).visibility = if (show) View.VISIBLE else View.GONE
+        findViewById<TextView>(R.id.both_split).visibility = if (show) View.VISIBLE else View.GONE
+        if (!show) return
+        // Bar: share of traffic so far on each network (at least a sliver, so both colours stay visible).
+        val wTotal = wifi?.totalBytes ?: 0
+        val cTotal = cell?.totalBytes ?: 0
+        val sum = (wTotal + cTotal).coerceAtLeast(1)
+        (findViewById<View>(R.id.both_bar_wifi).layoutParams as LinearLayout.LayoutParams).weight = (wTotal * 100f / sum).coerceAtLeast(1f)
+        (findViewById<View>(R.id.both_bar_cell).layoutParams as LinearLayout.LayoutParams).weight = (cTotal * 100f / sum).coerceAtLeast(1f)
+        findViewById<View>(R.id.both_bar).requestLayout()
+        val lines = listOfNotNull(wifi?.let { SpreadDialer.WIFI to it }, cell?.let { SpreadDialer.CELL to it },
+            use[SpreadDialer.WIRED]?.let { SpreadDialer.WIRED to it }).map { (id, u) ->
+            val name = getString(when (id) { SpreadDialer.CELL -> R.string.mobile_data; SpreadDialer.WIRED -> R.string.ethernet; else -> R.string.wifi })
+            getString(R.string.both_split_line, name, bitrate(u.downBps * 8.0), u.connections)
+        }
+        findViewById<TextView>(R.id.both_split).text = lines.joinToString("\n")
+    }
+
+    // ---------------------------------------------------------------- Speed test
+
+    private fun askSpeedTest() {
+        if (speedJob?.isActive == true) return
+        if (linkOf(Transport.CELLULAR)?.validated == true) {
+            AlertDialog.Builder(this).setTitle(R.string.st_title).setMessage(R.string.st_mobile_confirm)
+                .setPositiveButton(R.string.st_run) { _, _ -> runSpeedTest() }
+                .setNegativeButton(R.string.cancel, null).show()
+        } else runSpeedTest()
+    }
+
+    private fun runSpeedTest() {
+        val btn = findViewById<Button>(R.id.st_run)
+        val out = findViewById<TextView>(R.id.st_result)
+        btn.isEnabled = false
+        btn.setText(R.string.st_running)
+        // App scope: the test finishes and is saved even if this screen is closed.
+        speedJob = app.scope.launch {
+            val r = runCatching {
+                SpeedTester(getSystemService(android.net.ConnectivityManager::class.java)).run { p ->
+                    val live = p.mbps?.let { bitrate(it * 1e6) } ?: "…"
+                    val name = p.transport?.let(::transportName) ?: ""
+                    val text = when (p.step) {
+                        SpeedTester.Step.PING -> getString(R.string.st_step_ping, name)
+                        SpeedTester.Step.DOWNLOAD -> getString(R.string.st_step_down, name, live)
+                        SpeedTester.Step.UPLOAD -> getString(R.string.st_step_up, name, live)
+                        SpeedTester.Step.BOTH -> getString(R.string.st_step_both, live)
+                    }
+                    runOnUiThread { out.text = text }
+                }
+            }
+            r.onSuccess { prefs.addSpeedResult(it) }
+            runOnUiThread {
+                btn.isEnabled = true
+                btn.setText(R.string.st_run)
+                renderSpeedResult()
+                r.onFailure { out.text = getString(R.string.st_failed, it.message ?: it.javaClass.simpleName) }
+            }
+        }
+    }
+
+    private fun speedText(r: dev.netpilot.core.SpeedResult): String {
+        fun mbps(v: Double?) = v?.let { bitrate(it * 1e6) } ?: getString(R.string.st_unknown)
+        fun ping(v: Int?) = v?.let { getString(R.string.st_ping, it) } ?: getString(R.string.st_unknown)
+        val lines = ArrayList<String>()
+        r.wifi?.let { lines += getString(R.string.st_line, getString(R.string.wifi), mbps(it.downMbps), mbps(it.upMbps), ping(it.pingMs)) }
+        r.cell?.let { lines += getString(R.string.st_line, getString(R.string.mobile_data), mbps(it.downMbps), mbps(it.upMbps), ping(it.pingMs)) }
+        r.bothDownMbps?.let { both ->
+            lines += getString(R.string.st_both_line, mbps(both))
+            val best = listOfNotNull(r.wifi?.downMbps, r.cell?.downMbps).maxOrNull()
+            if (best != null && best > 0 && both > best) lines += getString(R.string.st_both_gain, ((both / best - 1) * 100).toInt())
+        }
+        lines += getString(R.string.st_when, DateUtils.getRelativeTimeSpanString(r.time, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS))
+        return lines.joinToString("\n")
+    }
+
+    private fun renderSpeedResult() {
+        if (speedJob?.isActive == true) return
+        val last = prefs.loadSpeedHistory().firstOrNull()
+        findViewById<TextView>(R.id.st_result).text = last?.let(::speedText) ?: getString(R.string.st_none)
+        findViewById<Button>(R.id.st_history).visibility = if (last != null) View.VISIBLE else View.GONE
+    }
+
+    private fun showSpeedHistory() {
+        val all = prefs.loadSpeedHistory()
+        AlertDialog.Builder(this).setTitle(R.string.st_history)
+            .setMessage(all.joinToString("\n\n") { speedText(it) })
+            .setPositiveButton(R.string.ok, null)
+            .setNeutralButton(R.string.st_clear) { _, _ -> prefs.clearSpeedHistory(); renderSpeedResult() }
+            .show()
     }
 
     private fun card(id: Int, icon: Int, name: Int) {
@@ -364,14 +511,17 @@ class MainActivity : Activity() {
         }
 
         val def = physicalDefault(st)
-        findViewById<TextView>(R.id.using_text).setText(when (def?.transport) {
+        val spreading = ShieldVpnService.spread.value != null
+        if (spreading) {
+            findViewById<TextView>(R.id.using_text).setText(R.string.using_both)
+        } else findViewById<TextView>(R.id.using_text).setText(when (def?.transport) {
             Transport.WIFI -> R.string.using_wifi
             Transport.CELLULAR -> R.string.using_mobile
             null -> R.string.using_none
             Transport.ETHERNET -> R.string.using_wired
             else -> R.string.using_other
         })
-        findViewById<TextView>(R.id.mode_chip).text = modeText(def?.transport, st.history)
+        findViewById<TextView>(R.id.mode_chip).text = if (spreading) getString(R.string.mode_spread) else modeText(def?.transport, st.history)
         findViewById<TextView>(R.id.using_detail).setText(when {
             !st.running -> R.string.using_detail_monitor_off
             linkOf(Transport.WIFI) != null && linkOf(Transport.CELLULAR) != null -> R.string.using_detail_backup
@@ -396,6 +546,7 @@ class MainActivity : Activity() {
             setText(if (historyExpanded) R.string.history_less else R.string.history_more)
         }
         renderNetworkTab()
+        renderBoth()
     }
 
     /**
@@ -451,8 +602,9 @@ class MainActivity : Activity() {
 
     private fun renderSpeedAndUsage() {
         val now = System.currentTimeMillis()
-        val rx = TrafficStats.getTotalRxBytes()
-        val tx = TrafficStats.getTotalTxBytes()
+        // Minus what NetPilot forwarded in "use both together": the tunnel counts it a second time.
+        val rx = TrafficStats.getTotalRxBytes().let { if (it < 0) it else it - ShieldVpnService.forwardedRx.get() }
+        val tx = TrafficStats.getTotalTxBytes().let { if (it < 0) it else it - ShieldVpnService.forwardedTx.get() }
         if (currentTab != 0) { lastRx = rx; lastTx = tx; lastSpeedAt = now; return } // only Home shows these
         if (rx >= 0 && lastRx >= 0 && now > lastSpeedAt) {
             val sec = (now - lastSpeedAt) / 1000.0
@@ -721,7 +873,7 @@ class MainActivity : Activity() {
         }
         findViewById<Switch>(R.id.keep_cell_switch).apply {
             isChecked = prefs.keepCellularUp
-            setOnCheckedChangeListener { _, on -> prefs.keepCellularUp = on; app.controller.setKeepCellularUp(on) }
+            setOnCheckedChangeListener { _, on -> prefs.keepCellularUp = on; app.controller.setKeepCellularUp(app.keepCellular) }
         }
         findViewById<Button>(R.id.internet_panel).setOnClickListener { open(Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY)) }
         val adv = findViewById<View>(R.id.advanced_container)
@@ -744,7 +896,54 @@ class MainActivity : Activity() {
                 override fun onNothingSelected(p: AdapterView<*>?) = Unit
             }
         }
-        findViewById<Button>(R.id.download).setOnClickListener { runSplitDownload() }
+        findViewById<Button>(R.id.fd_start).setOnClickListener {
+            val link = findViewById<EditText>(R.id.fd_url).text.toString().trim()
+            if (!link.startsWith("https://")) { findViewById<TextView>(R.id.fd_status).setText(R.string.fd_https_only); return@setOnClickListener }
+            FastDownloadService.start(this, link)
+        }
+        findViewById<Button>(R.id.fd_cancel).setOnClickListener { FastDownloadService.cancel(this) }
+        findViewById<Button>(R.id.fd_open).setOnClickListener {
+            FastDownloadService.state.value?.saved?.let { uri ->
+                if (!open(Intent(Intent.ACTION_VIEW, uri).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)))
+                    open(Intent(android.app.DownloadManager.ACTION_VIEW_DOWNLOADS))
+            }
+        }
+    }
+
+    private fun renderFastDownload() {
+        val d = FastDownloadService.state.value
+        val bar = findViewById<android.widget.ProgressBar>(R.id.fd_progress)
+        val status = findViewById<TextView>(R.id.fd_status)
+        findViewById<Button>(R.id.fd_start).isEnabled = d?.running != true
+        findViewById<Button>(R.id.fd_cancel).visibility = if (d?.running == true) View.VISIBLE else View.GONE
+        findViewById<Button>(R.id.fd_open).visibility = if (d?.saved != null) View.VISIBLE else View.GONE
+        bar.visibility = if (d?.running == true) View.VISIBLE else View.GONE
+        if (d == null) { status.text = ""; return }
+        val split = splitText(d.perLink)
+        status.text = when {
+            d.running -> {
+                bar.isIndeterminate = d.total <= 0
+                if (d.total > 0) bar.progress = (d.done * 1000 / d.total).toInt()
+                if (d.total > 0) getString(R.string.fd_progress, Formatter.formatShortFileSize(this, d.done),
+                    Formatter.formatShortFileSize(this, d.total), split) else getString(R.string.fd_starting)
+            }
+            d.error != null -> getString(R.string.fd_failed, d.error)
+            else -> {
+                val mbps = d.done * 8 / 1e3 / d.millis.coerceAtLeast(1)
+                getString(R.string.fd_done, d.name, Formatter.formatShortFileSize(this, d.done),
+                    DateUtils.formatElapsedTime(d.millis / 1000), bitrate(mbps * 1e6)) + "\n" + split +
+                    (if (!d.split) "\n" + getString(R.string.fd_single) else "")
+            }
+        }
+    }
+
+    /** "Wi-Fi 64% · Mobile data 36%" from bytes per network. */
+    private fun splitText(perLink: Map<String, Long>): String {
+        val sum = perLink.values.sum().coerceAtLeast(1)
+        return perLink.entries.sortedByDescending { it.value }.joinToString(" · ") { (id, b) ->
+            val name = getString(when (id) { SpreadDialer.CELL -> R.string.mobile_data; SpreadDialer.WIRED -> R.string.ethernet; else -> R.string.wifi })
+            getString(R.string.fd_split, name, (b * 100 / sum).toInt())
+        }
     }
 
     private fun renderNetworkTab() {
@@ -805,38 +1004,6 @@ class MainActivity : Activity() {
             s.findings.forEach { appendLine("[${it.severity}] ${it.code}: ${it.message}") }
             appendLine("events:")
             s.events.take(20).forEach { appendLine("  $it") }
-        }
-    }
-
-    private fun runSplitDownload() {
-        val status = findViewById<TextView>(R.id.dl_status)
-        val url = runCatching { URL(findViewById<EditText>(R.id.url).text.toString().trim()) }.getOrNull()
-            ?: run { status.setText(R.string.dns_custom_invalid); return }
-        val links = app.controller.state.value.links
-        val nets = app.controller.networks().filterKeys { id ->
-            links.any { it.id == id && (it.transport == Transport.WIFI || it.transport == Transport.CELLULAR) && it.validated }
-        }
-        if (nets.isEmpty()) { status.setText(R.string.using_detail_monitor_off); return }
-        status.text = "…"
-        ui.launch {
-            val out = File(cacheDir, "split-test.bin")
-            val r = runCatching {
-                MultipathDownloader().download(url, nets, out) { done, total ->
-                    runOnUiThread { status.text = String.format("%.1f / %.1f MB", done / 1e6, total / 1e6) }
-                }
-            }
-            status.text = r.fold(
-                onSuccess = { res ->
-                    val mbps = res.bytes * 8 / 1e3 / res.millis.coerceAtLeast(1)
-                    String.format("%.1f MB in %.1f s (%.1f Mbps)\n", res.bytes / 1e6, res.millis / 1e3, mbps) +
-                        res.bytesPerLink.entries.joinToString("\n") { e ->
-                            val t = links.firstOrNull { it.id == e.key }?.transport?.let(::transportName) ?: e.key
-                            String.format("%s: %.1f MB", t, e.value / 1e6)
-                        }
-                },
-                onFailure = { it.message ?: it.javaClass.simpleName },
-            )
-            out.delete()
         }
     }
 

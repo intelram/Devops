@@ -31,13 +31,16 @@ class Upstream(private val cm: ConnectivityManager, private val prefs: Prefs) {
     fun resolve(query: ByteArray, id: Int): Answer {
         try {
             val r = doh(prefs.dnsUrl, query)
+            if (!Dns.answers(query, r)) throw IOException("DoH answer doesn't match the question")
             lastEncryptedOk = true
             return Answer(Dns.withId(r, id), Via.ENCRYPTED)
         } catch (e: IOException) {
             lastEncryptedOk = false
             if (!prefs.allowPlainFallback) throw e
         }
-        return Answer(Dns.withId(plain(query), id), Via.PLAIN)
+        val r = plain(query)
+        if (!Dns.answers(query, r)) throw IOException("DNS answer doesn't match the question")
+        return Answer(Dns.withId(r, id), Via.PLAIN)
     }
 
     private fun doh(url: String, query: ByteArray): ByteArray {
@@ -83,7 +86,8 @@ class Upstream(private val cm: ConnectivityManager, private val prefs: Prefs) {
                 DatagramSocket().use { s ->
                     net.bindSocket(s)
                     s.soTimeout = 2_500
-                    s.send(DatagramPacket(query, query.size, InetSocketAddress(server, 53)))
+                    s.connect(InetSocketAddress(server, 53)) // replies from any other address are discarded
+                    s.send(DatagramPacket(query, query.size))
                     val buf = ByteArray(4096)
                     val p = DatagramPacket(buf, buf.size)
                     s.receive(p)

@@ -128,4 +128,16 @@ class DnsTest {
         self += listOf(0xC0.toByte(), at.toByte(), 0, 5, 0, 1, 0, 0, 0, 60, 0, 2, 0xC0.toByte(), (at + 12).toByte())
         assertEquals(emptyList(), Dns.cnameTargets(self.toByteArray()))
     }
+
+    @Test fun answersOnlyItsOwnQuestion() {
+        val q = query("www.example.com", Dns.TYPE_A)
+        val good = Dns.blockedResponse(Dns.parseQuery(q)!!)
+        kotlin.test.assertTrue(Dns.answers(q, good))
+        // Case may differ (0x20 randomisation), the name may not.
+        kotlin.test.assertTrue(Dns.answers(query("WWW.Example.com", Dns.TYPE_A), good))
+        kotlin.test.assertFalse(Dns.answers(q, Dns.blockedResponse(Dns.parseQuery(query("www.evil.com", Dns.TYPE_A))!!)))
+        kotlin.test.assertFalse(Dns.answers(q, Dns.blockedResponse(Dns.parseQuery(query("www.example.com", Dns.TYPE_AAAA))!!)))
+        kotlin.test.assertFalse(Dns.answers(q, q))                 // a query is not an answer
+        kotlin.test.assertFalse(Dns.answers(q, good.copyOf(14)))   // truncated
+    }
 }

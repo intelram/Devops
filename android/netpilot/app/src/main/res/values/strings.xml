@@ -59,7 +59,7 @@
     <string name="using_detail_monitor_off">Turn on protection, or keep this screen open, to check your connection.</string>
     <string name="cd_info">More information</string>
     <string name="bonding_title">Is my connection combined?</string>
-    <string name="bonding_text">No. NetPilot doesn\'t merge Wi-Fi and mobile data into one faster connection. That needs a special server in the middle (like Speedify uses), and it costs data and money.\n\nWhat NetPilot does instead:\n• Watches both connections all the time\n• Tells you straight away when Wi-Fi is "connected" but not working\n• Shows which connection your phone is using\n• Keeps mobile data ready, if you choose, so the phone can switch faster\n\nAndroid itself decides which connection your apps use.</string>
+    <string name="bonding_text">It depends on what you turn on.\n\nNormally: no. Your phone uses one connection at a time, and Android decides which. NetPilot watches both and tells you when Wi-Fi stops working.\n\nWith \"Use both together\" on: each new connection goes over Wi-Fi or mobile data, shared out by their speed. Many connections at once (web pages, app updates, several apps) get faster. One single connection, like one video or a video call, still uses one network: joining both for a single connection needs a server in the middle, which NetPilot doesn\'t use.\n\nFast download (Connection tab) really does use both networks for one file.</string>
 
     <string name="speed_title">Right now</string>
     <string name="speed_down">Download</string>
@@ -216,10 +216,7 @@
     <string name="mode_wifi_only">Wi-Fi only</string>
     <string name="mode_cell_only">Mobile data only</string>
     <string name="tech_title">Technical details</string>
-    <string name="split_title">Download test over both connections</string>
-    <string name="split_note">Downloads one file over Wi-Fi and mobile data at the same time. Works only inside NetPilot, and only with servers that support partial downloads. Uses mobile data.</string>
-    <string name="url_hint">https://… large file</string>
-    <string name="download">Start download test</string>
+    <string name="fd_title">Fast download</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -300,4 +297,54 @@
     <string name="crash_copy">Copy details</string>
     <string name="crash_dismiss">Close</string>
     <string name="crash_copied">Copied</string>
+
+    <string name="both_title">Wi-Fi + mobile data together</string>
+    <string name="both_switch">Use both together (experimental)</string>
+    <string name="both_off">Off. Turn on to spread your apps\' connections over Wi-Fi and mobile data at the same time. Uses mobile data and more battery.</string>
+    <string name="both_needs_protection">Starts when you tap Connect. Uses mobile data and more battery.</string>
+    <string name="both_waiting">On, but only one network is working right now, so everything uses it.</string>
+    <string name="both_active">On. New connections are shared between Wi-Fi and mobile data by their speed.</string>
+    <string name="both_split_line">%1$s: %2$s · %3$d connections</string>
+    <string name="both_confirm_title">Use Wi-Fi and mobile data together?</string>
+    <string name="both_confirm_text">Every connection from your apps will pass through NetPilot and go out over Wi-Fi or mobile data.\n\n• Faster when many things load at once: web pages, app updates, several apps.\n• Not faster for one single connection, such as one video or a video call.\n• Uses mobile data even when Wi-Fi works. Android will treat your connection as mobile data, so big automatic downloads wait.\n• Uses more battery.\n• \"Ping\" tools won\'t work while this is on.\n\nYou can turn it off any time.</string>
+    <string name="turn_on">Turn on</string>
+    <string name="mode_spread">Wi-Fi + mobile data together</string>
+    <string name="using_both">Your phone is using Wi-Fi and mobile data</string>
+    <string name="notif_spread_text">Wi-Fi + mobile data together · %1$s blocked today</string>
+    <string name="st_title">Speed test</string>
+    <string name="st_run">Test my speed</string>
+    <string name="st_running">Testing…</string>
+    <string name="st_history">Past results</string>
+    <string name="st_note">Tests Wi-Fi and mobile data separately, then both at once. Uses Cloudflare\'s speed test server, takes about a minute and uses up to about 100 MB of mobile data.</string>
+    <string name="st_none">No test yet.</string>
+    <string name="st_line">%1$s: ↓ %2$s · ↑ %3$s · %4$s</string>
+    <string name="st_both_line">Both at once: ↓ %1$s</string>
+    <string name="st_both_gain">%1$d%% more than the faster network alone, when many connections run at once.</string>
+    <string name="st_ping">%1$d ms response</string>
+    <string name="st_unknown">–</string>
+    <string name="st_when">Tested %1$s</string>
+    <string name="st_step_ping">%1$s: checking response time…</string>
+    <string name="st_step_down">%1$s: download %2$s</string>
+    <string name="st_step_up">%1$s: upload %2$s</string>
+    <string name="st_step_both">Both at once: download %1$s</string>
+    <string name="st_failed">Speed test didn\'t finish: %1$s</string>
+    <string name="st_mobile_confirm">The test uses up to about 100 MB of mobile data. Continue?</string>
+    <string name="st_clear">Clear results</string>
+    <string name="fd_note">Downloads one file over Wi-Fi and mobile data at the same time, then saves it in Downloads › NetPilot. Paste a link, or share a link to NetPilot from any app. Uses mobile data.</string>
+    <string name="fd_hint">https://… link to a file</string>
+    <string name="fd_start">Download</string>
+    <string name="fd_starting">Starting…</string>
+    <string name="fd_progress">%1$s of %2$s · %3$s</string>
+    <string name="fd_done">Saved %1$s (%2$s) in %3$s · %4$s</string>
+    <string name="fd_single">This server sends files only in one piece, so only one network was used.</string>
+    <string name="fd_open">Open</string>
+    <string name="fd_cancelled">Cancelled</string>
+    <string name="fd_https_only">Only https:// links can be downloaded.</string>
+    <string name="fd_no_network">No working Wi-Fi or mobile data</string>
+    <string name="fd_failed">Download failed: %1$s</string>
+    <string name="fd_done_title">Download finished</string>
+    <string name="fd_failed_title">Download failed</string>
+    <string name="fd_split">%1$s %2$d%%</string>
+    <string name="alert_plain_title">Encrypted DNS isn\'t working here</string>
+    <string name="alert_plain_text">Website lookups now use this network\'s own DNS, which the network can see and change. Normal on sign-in pages (hotels, cafés). If it keeps happening, someone may be blocking encrypted DNS: turn off \"Use the network\'s DNS if encrypted DNS fails\" in Settings to stop lookups instead.</string>
 </resources>

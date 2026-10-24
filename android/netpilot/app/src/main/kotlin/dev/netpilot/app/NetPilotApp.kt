@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.net.TrafficStats
 import android.os.SystemClock
 import android.provider.Settings
+import dev.netpilot.core.Transport
 import dev.netpilot.core.UsageMeter
 import kotlinx.coroutines.MainScope
 
@@ -19,6 +20,8 @@ class NetPilotApp : Application() {
     val stats by lazy { ShieldStats(prefs) }
     val blocklists by lazy { Blocklists(this, prefs) }
     val controller by lazy { FailoverController(this, MainScope()) }
+    /** Work that should finish even if the screen that started it closes (e.g. a speed test). */
+    val scope = MainScope()
 
     /** Number of visible screens; monitoring runs while a screen is visible or protection is on. */
     private var visibleScreens = 0
@@ -64,11 +67,23 @@ class NetPilotApp : Application() {
         return next.today
     }
 
-    fun startMonitoring() = controller.start(prefs.mode, prefs.keepCellularUp)
+    /** Mobile data must stay up for "use both together", even while Wi-Fi is the default. */
+    val keepCellular: Boolean get() = prefs.keepCellularUp || prefs.spreadMode
+
+    fun startMonitoring() = controller.start(prefs.mode, keepCellular)
+
+    /** Download speed (Mbps) from the last speed test of this kind of network, if it is under a week old. */
+    fun lastSpeed(t: Transport): Double? {
+        val r = prefs.loadSpeedHistory().firstOrNull() ?: return null
+        if (System.currentTimeMillis() - r.time > 7 * 24 * 3_600_000L) return null
+        return when (t) { Transport.WIFI -> r.wifi?.downMbps; Transport.CELLULAR -> r.cell?.downMbps; else -> null }
+    }
 
     fun stopMonitoringIfIdle() {
         if (visibleScreens == 0 && ShieldVpnService.state.value == ShieldState.OFF) controller.stop()
     }
+
+    val anyScreenVisible: Boolean get() = visibleScreens > 0
 
     fun screenVisible(visible: Boolean) {
         visibleScreens = (visibleScreens + if (visible) 1 else -1).coerceAtLeast(0)

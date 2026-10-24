@@ -2,6 +2,7 @@ package dev.netpilot.app
 
 import android.content.Context
 import dev.netpilot.core.Mode
+import dev.netpilot.core.SpeedResult
 import dev.netpilot.core.UsageState
 
 /** Encrypted-DNS upstreams offered in Settings. All are DNS-over-HTTPS (RFC 8484). */
@@ -120,6 +121,18 @@ class Prefs(context: Context) {
     }
     fun saveUsage(u: UsageState) = p.edit().putString("usageDay", u.day).putLong("usageBoot", u.bootId)
         .putLong("usageLast", u.lastCounter).putLong("usageToday", u.today).apply()
+
+    /** Experimental: spread connections over Wi-Fi and mobile data at the same time. */
+    var spreadMode: Boolean
+        get() = p.getBoolean("spread", false)
+        set(v) = p.edit().putBoolean("spread", v).apply()
+
+    /** Speed test results, newest first (last 10). */
+    fun loadSpeedHistory(): List<SpeedResult> =
+        (p.getString("speedHistory", "") ?: "").lines().mapNotNull { SpeedResult.decode(it) }
+    fun addSpeedResult(r: SpeedResult) =
+        p.edit().putString("speedHistory", (listOf(r) + loadSpeedHistory()).take(10).joinToString("\n") { it.encode() }).apply()
+    fun clearSpeedHistory() = p.edit().remove("speedHistory").apply()
 
     fun clearStats() = p.edit().remove("history").remove("statDay").remove("statBlockedDay").remove("statCheckedDay").remove("statBlockedAll").apply()
 }

@@ -16,6 +16,26 @@
         </LinearLayout>
 
         <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:accessibilityHeading="true" android:text="@string/fd_title" />
+            <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/fd_note" />
+            <EditText android:id="@+id/fd_url" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:minHeight="48dp" android:hint="@string/fd_hint" android:inputType="textUri" android:importantForAutofill="no" />
+            <Button android:id="@+id/fd_start" style="@style/Button.Filled" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:text="@string/fd_start" />
+            <ProgressBar android:id="@+id/fd_progress" style="@android:style/Widget.Material.ProgressBar.Horizontal"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:max="1000" android:visibility="gone" />
+            <TextView android:id="@+id/fd_status" style="@style/Text.Body" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:accessibilityLiveRegion="polite" android:textIsSelectable="true" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                <Button android:id="@+id/fd_open" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/fd_open" android:visibility="gone" />
+                <Button android:id="@+id/fd_cancel" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="@string/cancel" android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
             <Switch android:id="@+id/alerts_switch" style="@style/SwitchRow" android:text="@string/alerts_switch" />
             <Switch android:id="@+id/keep_cell_switch" style="@style/SwitchRow" android:text="@string/keep_cell_switch" />
             <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/keep_cell_note" />
@@ -31,16 +51,6 @@
                 <Spinner android:id="@+id/mode_spinner" android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:minHeight="48dp" android:layout_marginTop="4dp" />
                 <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/advanced_mode_note" />
-            </LinearLayout>
-            <LinearLayout style="@style/Card">
-                <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/split_title" />
-                <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/split_note" />
-                <EditText android:id="@+id/url" android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:minHeight="48dp" android:hint="@string/url_hint" android:inputType="textUri" android:importantForAutofill="no" />
-                <Button android:id="@+id/download" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="@string/download" />
-                <TextView android:id="@+id/dl_status" style="@style/Text.Secondary" android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:textIsSelectable="true" />
             </LinearLayout>
             <LinearLayout style="@style/Card" android:layout_marginBottom="16dp">
                 <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:accessibilityHeading="true" android:text="@string/tech_title" />

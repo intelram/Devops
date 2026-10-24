@@ -46,11 +46,12 @@ class MultipathDownloader(
         networks: Map<String, Network>,
         dest: File,
         expectedSha256: String? = null,
-        onProgress: (done: Long, total: Long) -> Unit = { _, _ -> },
+        onProgress: (done: Long, total: Long, perLink: Map<String, Long>) -> Unit = { _, _, _ -> },
     ): Result = withContext(Dispatchers.IO) {
         require(networks.isNotEmpty()) { "no networks" }
         require(url.protocol == "https") { "https only" }
         val meta = probeMeta(networks.values.first(), url)
+        if (dest.parentFile?.let { it.usableSpace < meta.length + (64L shl 20) } == true) throw IOException("not enough free space")
         val sched = ChunkScheduler(meta.length, chunkBytes)
         val start = System.currentTimeMillis()
 
@@ -74,7 +75,7 @@ class MultipathDownloader(
 
     private suspend fun worker(
         id: String, net: Network, url: URL, meta: Meta, sched: ChunkScheduler,
-        raf: RandomAccessFile, onProgress: (Long, Long) -> Unit,
+        raf: RandomAccessFile, onProgress: (Long, Long, Map<String, Long>) -> Unit,
     ) {
         var failures = 0
         while (true) {
@@ -90,7 +91,7 @@ class MultipathDownloader(
                 synchronized(raf) { raf.seek(r.start); raf.write(body) }
                 sched.complete(r, id)
                 failures = 0
-                onProgress(sched.completed(), meta.length)
+                onProgress(sched.completed(), meta.length, sched.bytesPerLink())
             } catch (e: NotRangeCapable) {
                 sched.fail(r, id); throw e // object changed mid-download: abort everything
             } catch (e: IOException) {
@@ -99,6 +100,41 @@ class MultipathDownloader(
                 delay(500L * failures)
             }
         }
+    }
+
+    /**
+     * Ordinary one-network download, for servers that don't support Range requests.
+     * [linkId] names the network in the result.
+     */
+    suspend fun downloadSingle(
+        url: URL, linkId: String, net: Network, dest: File,
+        onProgress: (done: Long, total: Long, perLink: Map<String, Long>) -> Unit = { _, _, _ -> },
+    ): Result = withContext(Dispatchers.IO) {
+        require(url.protocol == "https") { "https only" }
+        val start = System.currentTimeMillis()
+        val c = open(net, url).apply { readTimeout = 30_000 }
+        try {
+            if (c.responseCode != 200) throw IOException("HTTP ${c.responseCode}")
+            val total = c.contentLengthLong
+            if (total > 0 && dest.parentFile?.let { it.usableSpace < total + (64L shl 20) } == true) throw IOException("not enough free space")
+            var done = 0L
+            var lastReport = 0L
+            c.inputStream.use { input ->
+                dest.outputStream().use { out ->
+                    val buf = ByteArray(1 shl 16)
+                    while (true) {
+                        currentCoroutineContext().ensureActive()
+                        val k = input.read(buf)
+                        if (k < 0) break
+                        out.write(buf, 0, k)
+                        done += k
+                        if (done - lastReport > (256 shl 10)) { lastReport = done; onProgress(done, total, mapOf(linkId to done)) }
+                    }
+                }
+            }
+            if (total > 0 && done != total) throw IOException("download ended early ($done of $total bytes)")
+            Result(done, System.currentTimeMillis() - start, mapOf(linkId to done), sha256(dest))
+        } finally { c.disconnect() }
     }
 
     private fun probeMeta(net: Network, url: URL): Meta {

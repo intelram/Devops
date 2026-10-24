@@ -1,4 +1,6 @@
-# NetPilot: ad and tracker blocking plus Wi-Fi/mobile-data monitoring for Android (no server)
+# NetPilot: ad and tracker blocking, plus Wi-Fi and mobile data used together, for Android (no server)
+
+**Phase 6 (audit + speed):** [`docs/PHASE6_AUDIT_AND_SPEED.md`](docs/PHASE6_AUDIT_AND_SPEED.md) covers the security, privacy and performance audit and its fixes, the new *Use Wi-Fi and mobile data together* mode (per-connection load balancing, no server), Fast download, the speed test, and exactly what was and wasn't verified.
 
 **Phase 5 (ad blocking):** [`docs/PHASE5_ADBLOCKING.md`](docs/PHASE5_ADBLOCKING.md) covers hidden-tracker (CNAME) blocking, bypass protection, custom lists, safer and data-friendly updates, a comparison with AdGuard, and the honest limits of DNS filtering.
 

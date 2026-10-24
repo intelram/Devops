@@ -18,6 +18,8 @@ import dev.netpilot.core.Dns
 import dev.netpilot.core.DnsCache
 import dev.netpilot.core.DnsQuery
 import dev.netpilot.core.DomainFilter
+import dev.netpilot.core.FlowEngine
+import dev.netpilot.core.Routes
 import dev.netpilot.core.Verdict
 import dev.netpilot.core.Packets
 import dev.netpilot.core.UdpPacket
@@ -27,12 +29,17 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.NumberFormat
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.LinkedBlockingQueue
 
 enum class ShieldState { OFF, CONNECTING, ON, PAUSED }
+
+/** Live use of each network while "use both together" is on: bytes per second and open connections. */
+data class LinkUse(val downBps: Long, val upBps: Long, val connections: Int, val totalBytes: Long)
 
 /**
  * On-device protection VPN. Only DNS goes through the tunnel: the VPN's address space is a
@@ -63,6 +70,8 @@ class ShieldVpnService : VpnService() {
             "149.112.112.112", "208.67.222.222", "208.67.220.220")
         const val PAUSE_MINUTES = 5
         private const val MTU = 8_192
+        /** With every connection passing through, larger packets mean far fewer to copy. */
+        private const val SPREAD_MTU = 16_384
         private const val FIREFOX_CANARY = "use-application-dns.net"
         /** How often the running service checks whether a list is due (lists update daily). */
         private const val UPDATE_CHECK_SECONDS = 3_600
@@ -77,6 +86,15 @@ class ShieldVpnService : VpnService() {
         private val _alwaysOn = MutableStateFlow(false)
         /** True when Android's Always-on VPN setting controls this service. */
         val alwaysOn: StateFlow<Boolean> = _alwaysOn
+        private val _spread = MutableStateFlow<Map<String, LinkUse>?>(null)
+        /** Per network ("wifi", "cell", "wired") while connections are spread; null when not spreading. */
+        val spread: StateFlow<Map<String, LinkUse>?> = _spread
+        /**
+         * Bytes forwarded by the engine since the app started. Android's total traffic counters
+         * include the VPN interface, so forwarded traffic shows up twice there; screens subtract this.
+         */
+        val forwardedRx = java.util.concurrent.atomic.AtomicLong()
+        val forwardedTx = java.util.concurrent.atomic.AtomicLong()
 
         /**
          * Plain startService: callers are the visible app or the running service itself. The
@@ -109,6 +127,13 @@ class ShieldVpnService : VpnService() {
     private lateinit var pool: ThreadPoolExecutor
     @Volatile private var running = false
     private var tick: Thread? = null
+
+    // "Use Wi-Fi and mobile data together": every connection is forwarded by the engine.
+    @Volatile private var engine: FlowEngine? = null
+    private var dialer: SpreadDialer? = null
+    private var engineThreads: ExecutorService? = null
+    private var engineTick: Thread? = null
+    private var mtu = MTU
 
     override fun onCreate() {
         super.onCreate()
@@ -154,15 +179,21 @@ class ShieldVpnService : VpnService() {
     /** Builds (or rebuilds, for changed exclusions) the TUN interface. */
     private fun establish(reconnect: Boolean): Boolean {
         val prefs = app.prefs
+        val spreading = prefs.spreadMode
+        mtu = if (spreading) SPREAD_MTU else MTU
         val b = Builder()
             .setSession(getString(R.string.app_name))
-            .setMtu(MTU) // only DNS crosses this interface; a large MTU avoids truncating big answers
+            .setMtu(mtu) // a large MTU avoids truncating big DNS answers and cuts per-packet work
             .setBlocking(true)
             .setMetered(false) // inherit meteredness from Wi-Fi / mobile data instead of always "metered"
             .addAddress(TUN4, 32).addDnsServer(DNS4).addRoute(DNS4, 32)
             .addAddress(TUN6, 128).addDnsServer(DNS6).addRoute(DNS6, 128)
             .setConfigureIntent(PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE))
-        if (prefs.catchHardcodedDns) PUBLIC_DNS.forEach { b.addRoute(it, 32) }
+        if (spreading) {
+            // Public internet only: local devices (printers, casting, routers) and multicast stay on Wi-Fi.
+            Routes.publicV4().forEach { b.addRoute(it.toString().substringBefore('/'), it.prefix) }
+            b.addRoute(Routes.PUBLIC_V6, Routes.PUBLIC_V6_PREFIX)
+        } else if (prefs.catchHardcodedDns) PUBLIC_DNS.forEach { b.addRoute(it, 32) }
         // NetPilot's own sockets (encrypted DNS, list downloads, probes) must not loop through itself.
         b.addDisallowedApplication(packageName)
         for (pkg in prefs.excludedApps) {
@@ -179,20 +210,80 @@ class ShieldVpnService : VpnService() {
             reader = Thread(::readLoop, "shield-reader").also { it.start() }
         }
         cache.clear()
+        if (spreading) startSpreading() else stopSpreading()
         return true
+    }
+
+    private fun startSpreading() {
+        if (engine != null) return
+        val d = SpreadDialer(getSystemService(ConnectivityManager::class.java)) { t -> app.lastSpeed(t) }
+        d.refresh()
+        // Small stacks: forwarding threads only copy bytes, and there can be hundreds of them.
+        val threads = Executors.newCachedThreadPool { r -> Thread(null, r, "spread", 256L shl 10).apply { isDaemon = true } }
+        dialer = d
+        engineThreads = threads
+        val e = FlowEngine(SPREAD_MTU, ::writeRaw, d, threads)
+        engine = e
+        updateUnderlying(d)
+        engineTick = Thread({
+            var n = 0
+            while (engine === e) {
+                // Retransmission timers need ~100 ms only while connections are open.
+                val idle = e.tcpCount == 0
+                try { Thread.sleep(if (idle) 1_000 else 100) } catch (_: InterruptedException) { return@Thread }
+                e.tick()
+                n += if (idle) 10 else 1
+                if (n >= 20 && d.refresh().also { n = 0 }) updateUnderlying(d) // about every 2 s
+            }
+        }, "spread-tick").also { it.start() }
+    }
+
+    private fun stopSpreading() {
+        val e = engine ?: return
+        engine = null
+        e.shutdown()
+        engineTick?.interrupt(); engineTick = null
+        engineThreads?.shutdownNow(); engineThreads = null
+        dialer = null
+        _spread.value = null
+        lastTraffic = emptyMap()
+        runCatching { setUnderlyingNetworks(null) }
+    }
+
+    /**
+     * Tell Android which networks really carry the traffic, so the VPN counts as metered while
+     * mobile data is in use: apps then hold back large downloads, just as they would on mobile data.
+     */
+    private fun updateUnderlying(d: SpreadDialer) {
+        runCatching { setUnderlyingNetworks(d.links.map { it.network }.toTypedArray().takeIf { it.isNotEmpty() }) }
+    }
+
+    private var lastTraffic: Map<String, Pair<Long, Long>> = emptyMap()
+
+    /** Once a second: bytes per second on each network since the last call. */
+    private fun publishSpread() {
+        val e = engine ?: return
+        val now = e.traffic.mapValues { (_, t) -> t.down.get() to t.up.get() }
+        _spread.value = e.traffic.mapValues { (id, t) ->
+            val (d, u) = now.getValue(id)
+            val (d0, u0) = lastTraffic[id] ?: (0L to 0L)
+            forwardedRx.addAndGet(d - d0)
+            forwardedTx.addAndGet(u - u0)
+            LinkUse(d - d0, u - u0, t.connections.get(), d + u)
+        }
+        lastTraffic = now
     }
 
     private fun readLoop() {
         val fd = tun ?: return
         val input = FileInputStream(fd.fileDescriptor)
-        val buf = ByteArray(MTU + 64)
+        val buf = ByteArray(SPREAD_MTU + 64)
         try {
             while (running && tun === fd) {
                 val n = input.read(buf)
                 if (n <= 0) continue
-                val pkt = Packets.parseUdp(buf, n) ?: continue
-                if (pkt.dstPort != 53) continue
-                handle(pkt)
+                if (Packets.isDns(buf, n)) Packets.parseUdp(buf, n)?.let(::handle)
+                else engine?.onPacket(buf, n) // only when spreading; otherwise only DNS is routed here
             }
         } catch (e: IOException) {
             if (running && tun === fd) Log.w(TAG, "tun read failed", e)
@@ -217,7 +308,9 @@ class ShieldVpnService : VpnService() {
             pool.execute {
                 val reply = try {
                     val a = upstream.resolve(pkt.payload, q.id)
-                    _plainFallbackActive.value = a.via == Upstream.Via.PLAIN
+                    val plain = a.via == Upstream.Via.PLAIN
+                    if (plain && !_plainFallbackActive.value) alertPlainFallback()
+                    _plainFallbackActive.value = plain
                     cache.put(q.name, q.type, a.response)
                     a.response
                 } catch (e: IOException) {
@@ -246,8 +339,11 @@ class ShieldVpnService : VpnService() {
     private fun write(req: UdpPacket, payload: ByteArray) {
         val header = if (req.ipVersion == 4) 28 else 48
         // Too big for one datagram: answer "truncated" so the resolver knows rather than timing out.
-        val body = if (payload.size + header > MTU) Dns.truncated(payload) else payload
-        val p = Packets.reply(req, body)
+        val body = if (payload.size + header > mtu) Dns.truncated(payload) else payload
+        writeRaw(Packets.reply(req, body))
+    }
+
+    private fun writeRaw(p: ByteArray) {
         synchronized(this) {
             try { out?.write(p) } catch (e: IOException) { Log.w(TAG, "tun write failed", e) }
         }
@@ -256,14 +352,19 @@ class ShieldVpnService : VpnService() {
     private fun tickLoop() {
         var n = 0
         while (running) {
-            try { Thread.sleep(1_000) } catch (_: InterruptedException) { return }
-            app.stats.flush(persist = ++n % 30 == 0)
-            if (n % 30 == 0) app.mobileToday()
-            if (n % UPDATE_CHECK_SECONDS == 0) updateListsIfDue()
+            // Once a second while a NetPilot screen is open; every 5 s otherwise, to let the CPU sleep.
+            val step = if (app.anyScreenVisible) 1 else 5
+            try { Thread.sleep(step * 1_000L) } catch (_: InterruptedException) { return }
+            val before = n
+            n += step
+            app.stats.flush(persist = n / 30 != before / 30)
+            publishSpread()
+            if (n / 30 != before / 30) app.mobileToday()
+            if (n / UPDATE_CHECK_SECONDS != before / UPDATE_CHECK_SECONDS) updateListsIfDue()
             val wasPaused = _state.value == ShieldState.PAUSED
             val paused = System.currentTimeMillis() < _pausedUntil.value
             if (paused != wasPaused) { _state.value = if (paused) ShieldState.PAUSED else ShieldState.ON; requestTileRefresh() }
-            if (n % 5 == 0 || paused != wasPaused) notifyStatus()
+            if (n / 5 != before / 5 || paused != wasPaused) notifyStatus()
         }
     }
 
@@ -282,6 +383,7 @@ class ShieldVpnService : VpnService() {
         _plainFallbackActive.value = false
         _alwaysOn.value = false
         app.stats.flush(persist = true)
+        stopSpreading()
         runCatching { tun?.close() }
         tun = null
         synchronized(this) { out = null }
@@ -327,6 +429,7 @@ class ShieldVpnService : VpnService() {
         val paused = System.currentTimeMillis() < _pausedUntil.value
         val title = getString(if (paused) R.string.notif_paused_title else R.string.notif_on_title)
         val text = if (paused) getString(R.string.notif_paused_text, PAUSE_MINUTES)
+        else if (engine != null) getString(R.string.notif_spread_text, nf.format(s.blockedToday))
         else getString(R.string.notif_on_text, nf.format(s.blockedToday))
         val open = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
         fun action(a: String, label: Int, req: Int) = Notification.Action.Builder(null, getString(label),
@@ -344,9 +447,23 @@ class ShieldVpnService : VpnService() {
             .build()
     }
 
-    private fun postAlert(title: String, text: String) {
+    @Volatile private var lastPlainAlert = 0L
+
+    /**
+     * Encrypted DNS stopped working and lookups now go to the network's own DNS. That's normal on
+     * hotel Wi-Fi sign-in pages, but it is also what someone blocking encrypted DNS on purpose
+     * would cause, so say so (at most once an hour) instead of downgrading silently.
+     */
+    private fun alertPlainFallback() {
+        val now = System.currentTimeMillis()
+        if (now - lastPlainAlert < 3_600_000L) return
+        lastPlainAlert = now
+        postAlert(getString(R.string.alert_plain_title), getString(R.string.alert_plain_text), id = 13)
+    }
+
+    private fun postAlert(title: String, text: String, id: Int = 11) {
         val open = PendingIntent.getActivity(this, 1, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
-        getSystemService(NotificationManager::class.java).notify(11, Notification.Builder(this, CH_ALERTS)
+        getSystemService(NotificationManager::class.java).notify(id, Notification.Builder(this, CH_ALERTS)
             .setSmallIcon(R.drawable.ic_shield).setContentTitle(title).setContentText(text)
             .setStyle(Notification.BigTextStyle().bigText(text)).setContentIntent(open).setAutoCancel(true).build())
     }

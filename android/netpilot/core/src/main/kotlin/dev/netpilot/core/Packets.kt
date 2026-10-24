@@ -14,6 +14,19 @@ class UdpPacket(
 object Packets {
     private const val UDP = 17
 
+    /** Cheap check, without copying: is this a UDP datagram to port 53? */
+    fun isDns(b: ByteArray, len: Int): Boolean {
+        if (len < 28) return false
+        return when ((b[0].toInt() and 0xFF) shr 4) {
+            4 -> {
+                val ihl = (b[0].toInt() and 0x0F) * 4
+                b[9].toInt() == UDP && len >= ihl + 8 && Dns.u16(b, ihl + 2) == 53
+            }
+            6 -> len >= 48 && b[6].toInt() == UDP && Dns.u16(b, 42) == 53
+            else -> false
+        }
+    }
+
     fun parseUdp(buf: ByteArray, len: Int): UdpPacket? {
         if (len < 1) return null
         return when ((buf[0].toInt() and 0xFF) shr 4) {
@@ -90,8 +103,17 @@ object Packets {
     private fun sum(b: ByteArray, off: Int, len: Int): Long {
         var s = 0L
         var i = off
-        while (i + 1 < off + len) { s += Dns.u16(b, i); i += 2 }
-        if (i < off + len) s += (b[i].toInt() and 0xFF) shl 8
+        val end = off + len
+        // Hot path for every forwarded packet: eight bytes per round, sums fit easily in a Long.
+        while (i + 7 < end) {
+            s += (((b[i].toInt() and 0xFF) shl 8) or (b[i + 1].toInt() and 0xFF)) +
+                (((b[i + 2].toInt() and 0xFF) shl 8) or (b[i + 3].toInt() and 0xFF)) +
+                (((b[i + 4].toInt() and 0xFF) shl 8) or (b[i + 5].toInt() and 0xFF)) +
+                (((b[i + 6].toInt() and 0xFF) shl 8) or (b[i + 7].toInt() and 0xFF))
+            i += 8
+        }
+        while (i + 1 < end) { s += Dns.u16(b, i); i += 2 }
+        if (i < end) s += (b[i].toInt() and 0xFF) shl 8
         return s
     }
 

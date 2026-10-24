@@ -60,6 +60,42 @@
         </LinearLayout>
 
         <LinearLayout style="@style/Card">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+                <TextView style="@style/Text.CardTitle" android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content" android:text="@string/both_title" android:accessibilityHeading="true" />
+                <ImageButton android:id="@+id/both_info" android:layout_width="48dp" android:layout_height="48dp"
+                    android:src="@drawable/ic_info" android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cd_info" />
+            </LinearLayout>
+            <Switch android:id="@+id/both_switch" style="@style/SwitchRow" android:text="@string/both_switch" />
+            <TextView android:id="@+id/both_detail" style="@style/Text.Secondary" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:accessibilityLiveRegion="polite" />
+            <LinearLayout android:id="@+id/both_bar" android:layout_width="match_parent" android:layout_height="12dp"
+                android:layout_marginTop="8dp" android:orientation="horizontal" android:visibility="gone"
+                android:importantForAccessibility="no">
+                <View android:id="@+id/both_bar_wifi" android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:background="@color/primary" />
+                <View android:id="@+id/both_bar_cell" android:layout_width="0dp" android:layout_height="match_parent"
+                    android:layout_weight="1" android:background="@color/warn" />
+            </LinearLayout>
+            <TextView android:id="@+id/both_split" style="@style/Text.Body" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="4dp" android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
+            <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/st_title" android:accessibilityHeading="true" />
+            <TextView android:id="@+id/st_result" style="@style/Text.Body" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="6dp" android:accessibilityLiveRegion="polite" />
+            <Button android:id="@+id/st_run" style="@style/Button.Filled" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/st_run" />
+            <Button android:id="@+id/st_history" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/st_history" />
+            <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/st_note" />
+        </LinearLayout>
+
+        <LinearLayout style="@style/Card">
             <TextView style="@style/Text.CardTitle" android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/speed_title" android:accessibilityHeading="true" />
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp">

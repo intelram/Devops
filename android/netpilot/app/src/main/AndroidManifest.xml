@@ -10,6 +10,8 @@
     <!-- Foreground service type reserved for VPN apps (Android 14+). -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Fast download keeps running while you use other apps (Android 14+ needs the type permission). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <!-- Deliberately absent: location, QUERY_ALL_PACKAGES, READ_PHONE_STATE, usage access, accounts. -->
 
     <!-- Launchable apps only, for "Apps that skip protection". -->
@@ -37,6 +39,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- "Share" a link to NetPilot: it is placed in Fast download; nothing starts without a tap. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
         <activity android:name=".OnboardingActivity" android:exported="false" />
         <activity android:name=".AppPickerActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
@@ -52,6 +60,11 @@
             </intent-filter>
             <meta-data android:name="android.net.VpnService.SUPPORTS_ALWAYS_ON" android:value="true" />
         </service>
+
+        <service
+            android:name=".FastDownloadService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <service
             android:name=".ShieldTileService"

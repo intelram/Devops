@@ -132,6 +132,25 @@ object Dns {
         return out
     }
 
+    /**
+     * True if [response] is a reply (QR set) to exactly the question in [query]: same question
+     * count, name (case-insensitive), type and class. Anything else is dropped rather than
+     * cached under the wrong name, which is how cache-poisoning attempts usually look.
+     */
+    fun answers(query: ByteArray, response: ByteArray): Boolean {
+        if (response.size < 12 || query.size < 12) return false
+        if (u16(response, 2) and 0x8000 == 0 || u16(response, 4) != 1 || u16(query, 4) != 1) return false
+        val qEnd = (skipName(query, 12) ?: return false) + 4
+        val rEnd = (skipName(response, 12) ?: return false) + 4
+        if (qEnd > query.size || rEnd > response.size || qEnd != rEnd) return false
+        for (i in 12 until qEnd) {
+            val a = query[i].toInt() and 0xFF
+            val b = response[i].toInt() and 0xFF
+            if (a != b && Character.toLowerCase(a) != Character.toLowerCase(b)) return false
+        }
+        return true
+    }
+
     /** Reads a possibly compressed name; null if malformed or looping. */
     private fun readName(m: ByteArray, start: Int): String? {
         val sb = StringBuilder()

@@ -14,6 +14,8 @@
 #     Ubuntu's old dx with Retrolambda; that combination produced an APK that crashed on launch.)
 #
 # Output: $OUT/netpilot-debug.apk, signed with a throwaway debug key (NOT for distribution).
+#   With NETPILOT_KEYSTORE, NETPILOT_KEY_ALIAS and NETPILOT_KEYSTORE_PASS set: $OUT/netpilot-release.apk,
+#   signed with your own key (keep that key: Android only installs updates signed with the same key).
 # Usage:  tools/build-apk-no-agp.sh [work-dir]
 #   Needs: apt packages aapt zipalign apksigner, plus JDK 17+ and gradle 8.x on PATH.
 set -euo pipefail
@@ -50,7 +52,7 @@ import sys
 s = open(sys.argv[1]).read()
 tag = '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
 assert tag in s, "manifest root changed; update build-apk-no-agp.sh"
-s = s.replace(tag, tag[:-1] + ' package="dev.netpilot.app" android:versionCode="6" android:versionName="0.2.4">\n'
+s = s.replace(tag, tag[:-1] + ' package="dev.netpilot.app" android:versionCode="7" android:versionName="0.3.0">\n'
               '    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="35" />', 1)
 open(sys.argv[2], "w").write(s)
 EOF
@@ -101,11 +103,21 @@ cp classes.dex "$OUT/classes.dex"
 (cd "$OUT" && zip -q unsigned.apk classes.dex && rm classes.dex)
 if [[ -d merged/META-INF/services ]]; then (cd merged && zip -q -r "$OUT/unsigned.apk" META-INF/services); fi
 zipalign -f -p 4 "$OUT/unsigned.apk" "$OUT/aligned.apk"
-KS="$WORK/debug.keystore"
-[[ -f "$KS" ]] || keytool -genkeypair -keystore "$KS" -storepass android -keypass android -alias androiddebugkey \
-  -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=NetPilot Debug" >/dev/null 2>&1
-apksigner sign --ks "$KS" --ks-pass pass:android --key-pass pass:android --min-sdk-version 29 \
-  --out "$OUT/netpilot-debug.apk" "$OUT/aligned.apk"
-apksigner verify --min-sdk-version 29 "$OUT/netpilot-debug.apk"
-rm -f "$OUT/unsigned.apk" "$OUT/aligned.apk" "$OUT/netpilot-debug.apk.idsig"
-sha256sum "$OUT/netpilot-debug.apk"
+if [[ -n "${NETPILOT_KEYSTORE:-}" ]]; then
+  # Your own release key. Passwords are read from the environment by apksigner itself, so they
+  # never appear on a command line (visible to other processes) or in this script.
+  : "${NETPILOT_KEY_ALIAS:?set NETPILOT_KEY_ALIAS}" "${NETPILOT_KEYSTORE_PASS:?set NETPILOT_KEYSTORE_PASS}"
+  NAME=netpilot-release.apk
+  apksigner sign --ks "$NETPILOT_KEYSTORE" --ks-key-alias "$NETPILOT_KEY_ALIAS" --ks-pass env:NETPILOT_KEYSTORE_PASS \
+    --key-pass env:"${NETPILOT_KEY_PASS_VAR:-NETPILOT_KEYSTORE_PASS}" --min-sdk-version 29 --out "$OUT/$NAME" "$OUT/aligned.apk"
+else
+  NAME=netpilot-debug.apk
+  KS="$WORK/debug.keystore"
+  [[ -f "$KS" ]] || keytool -genkeypair -keystore "$KS" -storepass android -keypass android -alias androiddebugkey \
+    -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=NetPilot Debug" >/dev/null 2>&1
+  apksigner sign --ks "$KS" --ks-pass pass:android --key-pass pass:android --min-sdk-version 29 \
+    --out "$OUT/$NAME" "$OUT/aligned.apk"
+fi
+apksigner verify --min-sdk-version 29 "$OUT/$NAME"
+rm -f "$OUT/unsigned.apk" "$OUT/aligned.apk" "$OUT/$NAME.idsig"
+sha256sum "$OUT/$NAME"
