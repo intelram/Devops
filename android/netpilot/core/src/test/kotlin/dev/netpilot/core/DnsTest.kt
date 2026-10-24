@@ -95,4 +95,37 @@ class DnsTest {
         assertEquals(1, Dns.u16(t, 4)); assertEquals(0, Dns.u16(t, 6))
         assertContentEquals(raw.copyOfRange(12, raw.size), t.copyOfRange(12, t.size))
     }
+
+    /** metrics.shop.example CNAME shop.tracker.example (compressed), then an A record for it. */
+    private fun cloakedAnswer(): ByteArray {
+        val q = query("metrics.shop.example", Dns.TYPE_A)
+        val out = ArrayList<Byte>(q.toList())
+        fun u16(v: Int) { out += (v shr 8).toByte(); out += v.toByte() }
+        out[2] = 0x81.toByte(); out[3] = 0x80.toByte(); out[7] = 2 // response, 2 answers
+        // Answer 1: name -> pointer to question (offset 12), CNAME, rdata "shop.tracker" + pointer to "example".
+        val rdata = byteArrayOf(4, 's'.code.toByte(), 'h'.code.toByte(), 'o'.code.toByte(), 'p'.code.toByte(),
+            7) + "TRACKER".toByteArray() + byteArrayOf(0xC0.toByte(), (12 + 1 + 7 + 1 + 4).toByte())
+        u16(0xC00C); u16(Dns.TYPE_CNAME); u16(1); u16(0); u16(300); u16(rdata.size); rdata.forEach { out += it }
+        // Answer 2: pointer to the CNAME target, A 192.0.2.1.
+        val target = q.size + 12
+        u16(0xC000 or target); u16(Dns.TYPE_A); u16(1); u16(0); u16(300); u16(4)
+        out += 192.toByte(); out += 0; out += 2; out += 1
+        return out.toByteArray()
+    }
+
+    @Test fun cnameTargetsFollowCompression() {
+        assertEquals(listOf("shop.tracker.example"), Dns.cnameTargets(cloakedAnswer()))
+    }
+
+    @Test fun cnameTargetsSafeOnJunk() {
+        assertEquals(emptyList(), Dns.cnameTargets(ByteArray(3)))
+        val r = cloakedAnswer()
+        assertEquals(emptyList(), Dns.cnameTargets(r.copyOf(r.size - 30))) // cut inside the CNAME
+        // A pointer that points at itself must not hang.
+        val self = query("a.example", 1).toMutableList()
+        self[7] = 1
+        val at = self.size
+        self += listOf(0xC0.toByte(), at.toByte(), 0, 5, 0, 1, 0, 0, 0, 60, 0, 2, 0xC0.toByte(), (at + 12).toByte())
+        assertEquals(emptyList(), Dns.cnameTargets(self.toByteArray()))
+    }
 }

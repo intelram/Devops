@@ -495,18 +495,13 @@ class MainActivity : Activity() {
     // ---------------------------------------------------------------- Protection
 
     private fun setupProtection() {
-        val lc = findViewById<LinearLayout>(R.id.lists_container)
-        for (src in Blocklists.SOURCES) {
-            val row = LayoutInflater.from(this).inflate(R.layout.row_item, lc, false) as LinearLayout
-            val sw = Switch(this).apply { contentDescription = getString(src.title) }
-            bindListSwitch(src.id, sw)
-            row.addView(sw)
-            row.findViewById<TextView>(R.id.row_title).setText(src.title)
-            row.tag = src.id
-            row.setOnClickListener { sw.toggle() }
-            lc.addView(row)
-        }
+        buildListRows()
         findViewById<Button>(R.id.update_lists).setOnClickListener { updateListsInBackground(force = true) }
+        findViewById<Button>(R.id.add_list).setOnClickListener { askListUrl() }
+        findViewById<Switch>(R.id.update_on_mobile).apply {
+            isChecked = prefs.updateOnMobile
+            setOnCheckedChangeListener { _, on -> prefs.updateOnMobile = on }
+        }
         findViewById<Button>(R.id.pause_button).setOnClickListener { ShieldVpnService.send(this, ShieldVpnService.ACTION_PAUSE) }
         findViewById<Button>(R.id.allow_site_button).setOnClickListener { askDomain(R.string.dialog_site_allow_title) { allow(it) } }
         findViewById<Button>(R.id.block_site_button).setOnClickListener { askDomain(R.string.dialog_site_block_title) { block(it) } }
@@ -518,6 +513,49 @@ class MainActivity : Activity() {
         }
         findViewById<Button>(R.id.clear_activity).setOnClickListener { app.stats.clearLog() }
         renderUserLists()
+    }
+
+    private fun listName(src: ListSource): String = src.customName ?: getString(src.title)
+
+    /** Switches on the Protection tab, so a rebuild can drop them from [listSwitches]. */
+    private val listRowSwitches = ArrayList<Switch>()
+
+    private fun buildListRows() {
+        val lc = findViewById<LinearLayout>(R.id.lists_container)
+        lc.removeAllViews()
+        listSwitches.values.forEach { it.removeAll(listRowSwitches) }
+        listRowSwitches.clear()
+        for (src in app.blocklists.sources()) {
+            val row = LayoutInflater.from(this).inflate(R.layout.row_item, lc, false) as LinearLayout
+            val sw = Switch(this).apply { contentDescription = listName(src) }
+            bindListSwitch(src.id, sw)
+            listRowSwitches += sw
+            row.addView(sw)
+            row.findViewById<TextView>(R.id.row_title).text = listName(src)
+            row.tag = src.id
+            row.setOnClickListener { sw.toggle() }
+            if (src.isCustom) row.setOnLongClickListener {
+                confirm(getString(R.string.remove_list_title), R.string.list_custom_detail, R.string.remove) {
+                    app.blocklists.removeCustom(src.url); buildListRows(); renderLists()
+                }
+                true
+            }
+            lc.addView(row)
+        }
+    }
+
+    private fun askListUrl() {
+        val input = EditText(this).apply { hint = "https://"; setSingleLine(); minHeight = dp(48) }
+        val box = LinearLayout(this).apply { setPadding(dp(20), dp(8), dp(20), 0); addView(input, LinearLayout.LayoutParams(-1, -2)) }
+        AlertDialog.Builder(this).setTitle(R.string.add_list_title)
+            .setMessage(getString(R.string.add_list_text, Blocklists.MAX_CUSTOM)).setView(box)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                if (!app.blocklists.addCustom(input.text.toString())) { toast(getString(R.string.add_list_bad, Blocklists.MAX_CUSTOM)); return@setPositiveButton }
+                buildListRows(); renderLists()
+                toast(getString(R.string.add_list_added))
+                if (ShieldVpnService.state.value != ShieldState.OFF) updateListsInBackground(force = false)
+            }
+            .setNegativeButton(R.string.cancel, null).show()
     }
 
     /** One setting, several switches (Home quick toggles and the Protection tab): keep them all in step. */
@@ -548,7 +586,7 @@ class MainActivity : Activity() {
         val status = app.blocklists.status.value.associateBy { it.id }
         for (i in 0 until lc.childCount) {
             val row = lc.getChildAt(i)
-            val src = Blocklists.SOURCES.first { it.id == row.tag }
+            val src = app.blocklists.sources().firstOrNull { it.id == row.tag } ?: continue
             val st = status[src.id]
             val since = st?.let { DateUtils.getRelativeTimeSpanString(it.updatedAt, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS) }
             val line = when {
@@ -597,7 +635,7 @@ class MainActivity : Activity() {
         for (e in items) {
             val sub = if (e.blocked) getString(R.string.activity_blocked_by, reasonName(e)) else getString(R.string.activity_allowed)
             c.addView(row(e.domain, "$sub · ${tf.format(Date(e.time))}", if (e.blocked) R.drawable.ic_block else R.drawable.ic_check, null) {
-                if (e.blocked) confirm(getString(R.string.dialog_allow_title, e.domain), R.string.dialog_allow_text, R.string.allow) { allow(e.domain) }
+                if (e.blocked) askAllow(e)
                 else confirm(getString(R.string.dialog_block_title, e.domain), R.string.dialog_block_text, R.string.block) { block(e.domain) }
             })
         }
@@ -611,10 +649,37 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun reasonName(e: LogEntry): String = when {
-        e.reason == BlockReason.USER_BLOCKED -> getString(R.string.activity_blocked_by_you)
-        e.listId == "seed" -> getString(R.string.list_seed)
-        else -> Blocklists.SOURCES.firstOrNull { it.id == e.listId }?.let { getString(it.title) } ?: ""
+    private fun listNameById(id: String?): String = when (id) {
+        null -> getString(R.string.activity_blocked_by_you)
+        "seed" -> getString(R.string.list_seed)
+        else -> app.blocklists.sources().firstOrNull { it.id == id }?.let(::listName) ?: ""
+    }
+
+    private fun reasonName(e: LogEntry): String = when (e.reason) {
+        BlockReason.USER_BLOCKED -> getString(R.string.activity_blocked_by_you)
+        BlockReason.HIDDEN_TRACKER -> getString(R.string.activity_hidden_tracker, listNameById(e.listId))
+        else -> listNameById(e.listId)
+    }
+
+    /** Allow dialog for a blocked lookup, with a way to tell the list maker it was a mistake. */
+    private fun askAllow(e: LogEntry) {
+        val src = Blocklists.SOURCES.firstOrNull { it.id == e.listId }
+        val text = if (e.reason == BlockReason.HIDDEN_TRACKER) R.string.dialog_allow_hidden_text else R.string.dialog_allow_text
+        val b = AlertDialog.Builder(this).setTitle(getString(R.string.dialog_allow_title, e.domain)).setMessage(text)
+            .setPositiveButton(R.string.allow) { _, _ -> allow(e.domain) }
+            .setNegativeButton(R.string.cancel, null)
+        val report = src?.reportUrl
+        if (report != null) b.setNeutralButton(R.string.report_block) { _, _ ->
+            getSystemService(android.content.ClipboardManager::class.java)
+                .setPrimaryClip(android.content.ClipData.newPlainText("domain", e.domain))
+            AlertDialog.Builder(this).setTitle(R.string.report_block)
+                .setMessage(getString(R.string.report_block_text, e.domain, listName(src)))
+                .setPositiveButton(R.string.ok) { _, _ ->
+                    runCatching { startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(report))) }
+                }
+                .setNegativeButton(R.string.cancel, null).show()
+        }
+        b.show()
     }
 
     private fun allow(domain: String) {

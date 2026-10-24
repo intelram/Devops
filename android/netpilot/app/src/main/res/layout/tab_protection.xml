@@ -11,6 +11,10 @@
             <LinearLayout android:id="@+id/lists_container" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
             <Button android:id="@+id/update_lists" android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="@string/update_lists" />
+            <Button android:id="@+id/add_list" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/add_list" />
+            <Switch android:id="@+id/update_on_mobile" style="@style/SwitchRow" android:text="@string/update_on_mobile" />
+            <TextView style="@style/Text.Secondary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/update_on_mobile_detail" />
         </LinearLayout>
 
         <LinearLayout style="@style/Card">

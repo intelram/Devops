@@ -47,8 +47,19 @@ class Prefs(context: Context) {
         get() = p.getBoolean("catchHardcoded", false)
         set(v) = p.edit().putBoolean("catchHardcoded", v).apply()
 
-    fun listEnabled(id: String): Boolean = p.getBoolean("list_$id", Blocklists.SOURCES.first { it.id == id }.defaultOn)
+    fun listEnabled(id: String): Boolean = p.getBoolean("list_$id", Blocklists.SOURCES.firstOrNull { it.id == id }?.defaultOn ?: true)
     fun setListEnabled(id: String, on: Boolean) = p.edit().putBoolean("list_$id", on).apply()
+    fun removeListEnabled(id: String) = p.edit().remove("list_$id").apply()
+
+    /** Links (https) to lists the user added. */
+    var customLists: Set<String>
+        get() = p.getStringSet("customLists", emptySet())!!.toSet()
+        set(v) = p.edit().putStringSet("customLists", v).apply()
+
+    /** Let automatic list updates use mobile data (otherwise only Wi-Fi, or when a list is a week old). */
+    var updateOnMobile: Boolean
+        get() = p.getBoolean("updateOnMobile", false)
+        set(v) = p.edit().putBoolean("updateOnMobile", v).apply()
 
     var allowedDomains: Set<String>
         get() = p.getStringSet("allowed", emptySet())!!.toSet()

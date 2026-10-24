@@ -61,4 +61,24 @@ class DomainSetTest {
         assertEquals(Quality.FAIR, qualityOf(true, 600))
         assertEquals(Quality.POOR, qualityOf(true, 2000))
     }
+
+    @Test fun aliasToBlockedDomainIsHiddenTracker() {
+        val f = DomainFilter(mapOf("ads" to DomainSet.of(listOf("tracker.example"))), emptySet(), setOf("allowed.example"))
+        val v = f.check("metrics.shop.example")
+        assertFalse(v.blocked)
+        val hidden = f.checkAliases(v, listOf("edge.cdn.example", "shop.tracker.example"))
+        assertEquals(Verdict(true, BlockReason.HIDDEN_TRACKER, "ads"), hidden)
+        assertNull(f.checkAliases(v, listOf("edge.cdn.example")))
+        // The user's allow wins over a blocked alias.
+        assertNull(f.checkAliases(f.check("allowed.example"), listOf("shop.tracker.example")))
+    }
+
+    @Test fun neverBlocksPhoneHealthChecks() {
+        val f = DomainFilter(mapOf("bad" to DomainSet.of(listOf("gstatic.com", "google.com"))), emptySet(), emptySet())
+        assertFalse(f.check("connectivitycheck.gstatic.com").blocked)
+        assertTrue(f.check("ads.gstatic.com").blocked)
+        // The user can still block them on purpose.
+        val g = DomainFilter(emptyMap(), setOf("connectivitycheck.gstatic.com"), emptySet())
+        assertTrue(g.check("connectivitycheck.gstatic.com").blocked)
+    }
 }

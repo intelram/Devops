@@ -14,6 +14,7 @@ class DnsQuery(
 object Dns {
     const val TYPE_A = 1
     const val TYPE_AAAA = 28
+    const val TYPE_CNAME = 5
     const val RCODE_SERVFAIL = 2
     const val RCODE_NXDOMAIN = 3
     // Short, so "Pause" and "Allow" take effect within seconds despite the OS resolver cache.
@@ -106,6 +107,55 @@ object Dns {
             p += 10 + u16(r, p + 8)
         }
         return if (p <= r.size) min else null
+    }
+
+    /**
+     * Alias targets (CNAME records) in an answer, lower-case. Trackers "cloaked" as a first-party
+     * subdomain (metrics.shop.example -> shop.tracker.example) show up here, so the filter can
+     * block the real destination. Malformed input returns what was parsed so far.
+     */
+    fun cnameTargets(r: ByteArray): List<String> {
+        if (r.size < 12) return emptyList()
+        val qd = u16(r, 4); val an = u16(r, 6)
+        var p = 12
+        repeat(qd) { p = (skipName(r, p) ?: return emptyList()) + 4 }
+        val out = ArrayList<String>()
+        repeat(an) {
+            p = skipName(r, p) ?: return out
+            if (p + 10 > r.size) return out
+            val type = u16(r, p); val rdLen = u16(r, p + 8)
+            val rd = p + 10
+            if (rd + rdLen > r.size) return out
+            if (type == TYPE_CNAME) readName(r, rd)?.let { out += it }
+            p = rd + rdLen
+        }
+        return out
+    }
+
+    /** Reads a possibly compressed name; null if malformed or looping. */
+    private fun readName(m: ByteArray, start: Int): String? {
+        val sb = StringBuilder()
+        var p = start
+        var jumps = 0
+        while (p < m.size) {
+            val len = m[p].toInt() and 0xFF
+            when {
+                len == 0 -> return sb.toString()
+                len and 0xC0 == 0xC0 -> {
+                    if (p + 1 >= m.size || ++jumps > 16) return null
+                    p = ((len and 0x3F) shl 8) or (m[p + 1].toInt() and 0xFF)
+                }
+                len and 0xC0 != 0 -> return null
+                else -> {
+                    if (p + 1 + len > m.size || len > 63) return null
+                    if (sb.isNotEmpty()) sb.append('.')
+                    for (i in 1..len) sb.append((m[p + i].toInt() and 0xFF).toChar().lowercaseChar())
+                    if (sb.length > 253) return null
+                    p += 1 + len
+                }
+            }
+        }
+        return null
     }
 
     private fun skipName(m: ByteArray, start: Int): Int? {

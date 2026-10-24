@@ -122,7 +122,7 @@ class DomainSet private constructor(private val hashes: LongArray) {
     }
 }
 
-enum class BlockReason { LIST, USER_BLOCKED }
+enum class BlockReason { LIST, USER_BLOCKED, HIDDEN_TRACKER }
 
 data class Verdict(val blocked: Boolean, val reason: BlockReason? = null, val listId: String? = null, val userAllowed: Boolean = false)
 
@@ -134,12 +134,15 @@ class DomainFilter(
     private val lists: Map<String, DomainSet>,
     private val userBlocked: Set<String>,
     private val userAllowed: Set<String>,
+    private val neverBlock: Set<String> = NEVER_BLOCK,
 ) {
     val totalDomains: Int get() = lists.values.sumOf { it.size }
 
     fun check(domain: String): Verdict {
         if (suffixMatch(domain, userAllowed)) return Verdict(false, userAllowed = true)
         if (suffixMatch(domain, userBlocked)) return Verdict(true, BlockReason.USER_BLOCKED)
+        // A bad or tampered list must not be able to cut the phone off from its own health checks.
+        if (domain in neverBlock) return Verdict(false)
         for ((id, set) in lists) if (set.matches(domain)) return Verdict(true, BlockReason.LIST, id)
         return Verdict(false)
     }
@@ -155,7 +158,27 @@ class DomainFilter(
         }
     }
 
+    /**
+     * Second look for allowed lookups: if the answer is an alias to a blocked domain (CNAME
+     * cloaking), block it as a hidden tracker. Domains the user allowed are never second-guessed.
+     */
+    fun checkAliases(queried: Verdict, targets: List<String>): Verdict? {
+        if (queried.blocked || queried.userAllowed) return null
+        for (t in targets) {
+            val v = check(t)
+            if (v.blocked) return Verdict(true, BlockReason.HIDDEN_TRACKER, v.listId)
+        }
+        return null
+    }
+
     companion object {
+        // Declared before ALLOW_ALL, whose constructor reads it as a default argument.
+        /** Exact names the phone needs to judge connectivity, keep time and receive push messages. */
+        val NEVER_BLOCK = setOf(
+            "connectivitycheck.gstatic.com", "connectivitycheck.android.com", "clients3.google.com",
+            "www.google.com", "time.android.com", "time.google.com", "mtalk.google.com",
+        )
+
         val ALLOW_ALL = DomainFilter(emptyMap(), emptySet(), emptySet())
     }
 }

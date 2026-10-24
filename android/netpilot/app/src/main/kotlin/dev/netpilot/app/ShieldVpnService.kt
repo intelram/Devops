@@ -16,6 +16,9 @@ import android.service.quicksettings.TileService
 import android.util.Log
 import dev.netpilot.core.Dns
 import dev.netpilot.core.DnsCache
+import dev.netpilot.core.DnsQuery
+import dev.netpilot.core.DomainFilter
+import dev.netpilot.core.Verdict
 import dev.netpilot.core.Packets
 import dev.netpilot.core.UdpPacket
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,6 +63,9 @@ class ShieldVpnService : VpnService() {
             "149.112.112.112", "208.67.222.222", "208.67.220.220")
         const val PAUSE_MINUTES = 5
         private const val MTU = 8_192
+        private const val FIREFOX_CANARY = "use-application-dns.net"
+        /** How often the running service checks whether a list is due (lists update daily). */
+        private const val UPDATE_CHECK_SECONDS = 3_600
 
         private val _state = MutableStateFlow(ShieldState.OFF)
         val state: StateFlow<ShieldState> = _state
@@ -135,8 +141,14 @@ class ShieldVpnService : VpnService() {
         app.startMonitoring()
         reader = Thread(::readLoop, "shield-reader").also { it.start() }
         tick = Thread(::tickLoop, "shield-tick").also { it.start() }
-        if (app.blocklists.needsUpdate()) pool.execute { runCatching { app.blocklists.update(force = false) } }
+        updateListsIfDue()
         requestTileRefresh()
+    }
+
+    /** Background list refresh; [Blocklists.update] applies the mobile-data policy itself. */
+    private fun updateListsIfDue() {
+        if (!app.blocklists.needsUpdate()) return
+        try { pool.execute { runCatching { app.blocklists.update(force = false) } } } catch (_: RejectedExecutionException) { }
     }
 
     /** Builds (or rebuilds, for changed exclusions) the TUN interface. */
@@ -191,10 +203,16 @@ class ShieldVpnService : VpnService() {
         val q = Dns.parseQuery(pkt.payload) ?: return
         val now = System.currentTimeMillis()
         val paused = now < _pausedUntil.value
-        val verdict = if (paused) null else app.blocklists.filter.check(q.name)
-        app.stats.record(q.name, verdict?.blocked == true, verdict?.reason, verdict?.listId)
-        if (verdict?.blocked == true) { write(pkt, Dns.blockedResponse(q)); return }
-        cache.get(q.name, q.type, q.id)?.let { write(pkt, it); return }
+        // Firefox's canary: "no such domain" tells it to use the phone's DNS (this filter)
+        // instead of switching on its own encrypted DNS and skipping protection.
+        if (!paused && q.name == FIREFOX_CANARY) { write(pkt, Dns.errorResponse(q, Dns.RCODE_NXDOMAIN)); return }
+        val filter = app.blocklists.filter
+        val verdict = if (paused) null else filter.check(q.name)
+        if (verdict?.blocked == true) {
+            app.stats.record(q.name, true, verdict.reason, verdict.listId)
+            write(pkt, Dns.blockedResponse(q)); return
+        }
+        cache.get(q.name, q.type, q.id)?.let { answer(pkt, q, verdict, filter, it); return }
         try {
             pool.execute {
                 val reply = try {
@@ -203,13 +221,26 @@ class ShieldVpnService : VpnService() {
                     cache.put(q.name, q.type, a.response)
                     a.response
                 } catch (e: IOException) {
-                    Dns.errorResponse(q)
+                    null
                 }
-                write(pkt, reply)
+                if (reply == null) { app.stats.record(q.name, false, null, null); write(pkt, Dns.errorResponse(q)) }
+                else answer(pkt, q, verdict, filter, reply)
             }
         } catch (e: RejectedExecutionException) {
+            app.stats.record(q.name, false, null, null)
             write(pkt, Dns.errorResponse(q)) // overloaded: fail fast rather than queue forever
         }
+    }
+
+    /**
+     * Sends an upstream (or cached) answer, unless it is an alias to a blocked domain: a tracker
+     * hidden behind a first-party name (CNAME cloaking). Checked on every answer, so a list
+     * update applies to cached answers too.
+     */
+    private fun answer(pkt: UdpPacket, q: DnsQuery, verdict: Verdict?, filter: DomainFilter, reply: ByteArray) {
+        val hidden = verdict?.let { filter.checkAliases(it, Dns.cnameTargets(reply)) }
+        app.stats.record(q.name, hidden != null, hidden?.reason, hidden?.listId)
+        write(pkt, if (hidden != null) Dns.blockedResponse(q) else reply)
     }
 
     private fun write(req: UdpPacket, payload: ByteArray) {
@@ -228,6 +259,7 @@ class ShieldVpnService : VpnService() {
             try { Thread.sleep(1_000) } catch (_: InterruptedException) { return }
             app.stats.flush(persist = ++n % 30 == 0)
             if (n % 30 == 0) app.mobileToday()
+            if (n % UPDATE_CHECK_SECONDS == 0) updateListsIfDue()
             val wasPaused = _state.value == ShieldState.PAUSED
             val paused = System.currentTimeMillis() < _pausedUntil.value
             if (paused != wasPaused) { _state.value = if (paused) ShieldState.PAUSED else ShieldState.ON; requestTileRefresh() }
